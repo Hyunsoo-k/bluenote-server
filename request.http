@@ -1,0 +1,15 @@
+GET http://localhost:3000/bbs/board
+
+###
+
+GET https://bluenote-server.onrender.com/bbs/board
+
+###
+
+POST https://bluenote-server.onrender.com/bbs/board
+Content-Type: application/json
+
+{
+  "title": "자유게시판 POST 테스트",
+  "content": "자유게시판 POST 테스트 입니다."
+}

@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+const cors = require("cors");
 
 const { NoticePost, NewsPost, BoardPost, PromotePost, JobPost } = require("./model/bbs.js");
 
@@ -9,6 +10,7 @@ mongoose.connect(process.env.DATABASE_URL).then(() => console.log("Connected to 
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: ["http://localhost:3000", "https://bluenote-server.onrender.com"]}));
 
 const asyncHandler = (handler) => {
   return async (req, res) => {
@@ -39,6 +41,7 @@ app.get(
   asyncHandler(async (req, res) => {
     const posts = await getModel(req.params.main_category).find({}).sort({ createdAt: -1 });
     res.send(posts);
+    console.log(req)
   })
 );
 
