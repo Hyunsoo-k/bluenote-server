@@ -9,6 +9,10 @@ const NoticePostSchema = new mongoose.Schema(
       enum: ["All"],
       trim: true,
     },
+    writer: {
+      type: String,
+      required: true
+    },
     title: {
       type: String,
       required: true,
@@ -44,6 +48,9 @@ const NewsPostSchema = new mongoose.Schema(
       enum: ["국내", "국외", "All"],
       trim: true,
     },
+    writer: {
+      type: String
+    },
     title: {
       type: String,
       required: true,
@@ -76,10 +83,8 @@ const BoardPostSchema = new mongoose.Schema(
       enum: ["일반", "녹음", "팁", "All"],
       trim: true,
     },
-    writter: {
-      type: String,
-      minLength: 2,
-      maxLength: 8,
+    writer: {
+      type: String
     },
     title: {
       type: String,
@@ -113,10 +118,8 @@ const PromotePostSchema = new mongoose.Schema(
       enum: ["밴드홍보", "앨범홍보", "재즈바홍보", "All"],
       trim: true,
     },
-    writter: {
-      type: String,
-      minLength: 2,
-      maxLength: 8,
+    writer: {
+      type: String
     },
     title: {
       type: String,
@@ -150,10 +153,8 @@ const JobPostSchema = new mongoose.Schema(
       enum: ["구인", "구직", "All"],
       trim: true,
     },
-    writter: {
-      type: String,
-      minLength: 2,
-      maxLengthL: 8,
+    writer: {
+      type: String
     },
     title: {
       type: String,
