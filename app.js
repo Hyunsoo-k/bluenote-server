@@ -39,9 +39,13 @@ const getModel = (mainCategory) => {
 app.get(
   "/bbs/:main_category",
   asyncHandler(async (req, res) => {
-    const posts = await getModel(req.params.main_category).find({}).sort({ createdAt: -1 });
-    res.send(posts);
-    console.log(req)
+    const posts = await getModel(req.params.main_category).find().sort({ createdAt: -1 });
+    const count = await getModel(req.params.main_category).countDocuments();
+    const postsData = {
+      posts: posts,
+      count: count
+    }
+    res.send(postsData);
   })
 );
 

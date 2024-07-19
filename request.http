@@ -13,3 +13,7 @@ Content-Type: application/json
   "title": "자유게시판 POST 테스트",
   "content": "자유게시판 POST 테스트 입니다."
 }
+
+###
+
+DELETE https://bluenote-server.onrender.com/bbs/board/66991430d824011666474c2f
