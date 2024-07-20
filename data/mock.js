@@ -10,6 +10,7 @@ const seedNotice = [
 const seedNews = [
   {
     subCategory: "국내",
+    writer: "운영자",
     title: "뉴스 게시판 테스트",
     content: "뉴스 게시판 테스트 입니다."
   }
