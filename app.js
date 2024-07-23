@@ -39,13 +39,53 @@ const getModel = (mainCategory) => {
 app.route("/bbs/:main_category")
   .get(
     asyncHandler(async (req, res) => {
-      const posts = await getModel(req.params.main_category).find().sort({ createdAt: -1 });
-      const count = await getModel(req.params.main_category).countDocuments();
-      const postsData = {
+      let subCategory;
+
+      switch (req.query.sub_category){ 
+        case ("all" || undefined):
+          subCategory = "All";
+          break;
+        case ("domestic"):
+          subCategory = "국내";
+          break;
+        case ("overseas"):
+          subCategory = "국외";
+          break;
+        case ("common"):
+          subCategory = "일반";
+          break;
+        case ("record"):
+          subCategory = "녹음";
+          break;
+        case ("tip"):
+          subCategory = "팁";
+          break;
+        case ("band_promotion"):
+          subCategory = "밴드홍보";
+          break;
+        case ("album_promotion"):
+          subCategory = "앨범홍보";
+          break;
+        case ("jazzbar_promotion"):
+          subCategory = "재즈바홍보";
+          break;
+        case ("job_posting"):
+          subCategory = "구인";
+          break;
+        case ("job_seeking"):
+          subCategory = "구직";
+          break;
+      }
+
+      const posts = subCategory === "All" ?
+        await getModel(req.params.main_category).find().sort({ createdAt: -1 }) :
+        await getModel(req.params.main_category).find({ sub: subCategory }).sort({ createdAt: -1 });    
+      const count = posts.length;
+      const resData = {
         posts: posts,
         count: count,
       };
-      res.send(postsData);
+      res.send(resData);
     })
   )
   .post(
