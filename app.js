@@ -39,54 +39,28 @@ const getModel = (mainCategory) => {
 app.route("/bbs/:main_category")
   .get(
     asyncHandler(async (req, res) => {
-      console.log(req.query.sub_category);
-      let subCategory;
-
-      switch (req.query.sub_category){ 
-        case ("all" || undefined):
-          subCategory = "All";
-          break;
-        case ("domestic"):
-          subCategory = "국내";
-          break;
-        case ("overseas"):
-          subCategory = "국외";
-          break;
-        case ("common"):
-          subCategory = "일반";
-          break;
-        case ("record"):
-          subCategory = "녹음";
-          break;
-        case ("tip"):
-          subCategory = "팁";
-          break;
-        case ("band_promotion"):
-          subCategory = "밴드홍보";
-          break;
-        case ("album_promotion"):
-          subCategory = "앨범홍보";
-          break;
-        case ("jazzbar_promotion"):
-          subCategory = "재즈바홍보";
-          break;
-        case ("job_posting"):
-          subCategory = "구인";
-          break;
-        case ("job_seeking"):
-          subCategory = "구직";
-          break;
-      }
-
-      const posts = subCategory === "All" ?
-        await getModel(req.params.main_category).find().sort({ createdAt: -1 }) :
-        await getModel(req.params.main_category).find({ subCategory: subCategory }).sort({ createdAt: -1 });    
-      const count = posts.length;
-      const resData = {
-        posts: posts,
-        count: count,
+      const subCategoryMap = {
+        domestic: "국내",
+        overseas: "국외",
+        common: "일반",
+        record: "녹음",
+        tip: "팁",
+        band_promotion: "밴드홍보",
+        album_promotion: "앨범홍보",
+        jazzbar_promotion: "재즈바홍보",
+        job_posting: "구인",
+        job_seeking: "구직",
       };
-      res.send(resData);
+
+      const subCategory = subCategoryMap[req.query.sub_category] || "All";
+      const query = subCategory === "All" ? {} : { subCategory };
+
+      const posts = await getModel(req.params.main_category).find(query).sort({ createdAt: -1 });
+
+      res.send({
+        posts,
+        count: posts.length,
+      });
     })
   )
   .post(
@@ -98,7 +72,8 @@ app.route("/bbs/:main_category")
 
 // 게시글 조회, 게시글 수정, 게시글 삭제
 
-app.route("/bbs/:main_category/:id")
+app
+  .route("/bbs/:main_category/:id")
   .get(
     asyncHandler(async (req, res) => {
       const post = await getModel(req.params.main_category).findById(req.params.id);
@@ -136,7 +111,8 @@ app.route("/bbs/:main_category/:id")
 
 // 게시글 댓글 목록 조회, 게시글 댓글 등록
 
-app.route("/bbs/:main_category/:id/comment")
+app
+  .route("/bbs/:main_category/:id/comment")
   .get(
     asyncHandler(async (req, res) => {
       const post = await getModel(req.params.main_category).findById(req.params.id);
@@ -158,11 +134,12 @@ app.route("/bbs/:main_category/:id/comment")
         res.status(404).send({ message: "Cannot find given id." });
       }
     })
-  )
+  );
 
 // 게시글 댓글 수정, 게시글 댓글 삭제
 
-app.route("/bbs/:main_category/:id/comment/:comment_id")
+app
+  .route("/bbs/:main_category/:id/comment/:comment_id")
   .patch(
     asyncHandler(async (req, res) => {
       const post = await getModel(req.params.main_category).findById(req.params.id);
