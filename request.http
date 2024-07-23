@@ -1,8 +1,8 @@
-GET https://bluenote-server.onrender.com/bbs/board
+GET http://localhost:3000/bbs/board?sub_category=tip
 
 ###
 
-GET http://localhost:3000/bbs/board?sub_category=tip
+GET http://bluenote-server.onrender.com/bbs/board?sub_category=tip
 
 ###
 

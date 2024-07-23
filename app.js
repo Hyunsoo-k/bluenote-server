@@ -39,6 +39,7 @@ const getModel = (mainCategory) => {
 app.route("/bbs/:main_category")
   .get(
     asyncHandler(async (req, res) => {
+      console.log(req.query.sub_category);
       let subCategory;
 
       switch (req.query.sub_category){ 
@@ -79,7 +80,7 @@ app.route("/bbs/:main_category")
 
       const posts = subCategory === "All" ?
         await getModel(req.params.main_category).find().sort({ createdAt: -1 }) :
-        await getModel(req.params.main_category).find({ sub: subCategory }).sort({ createdAt: -1 });    
+        await getModel(req.params.main_category).find({ subCategory: subCategory }).sort({ createdAt: -1 });    
       const count = posts.length;
       const resData = {
         posts: posts,
