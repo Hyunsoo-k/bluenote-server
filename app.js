@@ -58,8 +58,8 @@ app
       const subCategory = subCategoryMap[sub_category];
       const query = subCategory === "All" ? {} : { subCategory };
       const pageSize = 15;
-      const totalPostCount = await getModel(req.main_category).countDocuments(query);
-      const postList = await getModel(req.main_category)
+      const totalPostCount = await getModel(req.params.main_category).countDocuments(query);
+      const postList = await getModel(req.params.main_category)
         .find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * pageSize)
