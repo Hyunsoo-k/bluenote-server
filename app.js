@@ -36,7 +36,8 @@ const getModel = (mainCategory) => {
 
 // 게시글 목록 조회, 게시글 등록
 
-app.route("/bbs/:main_category")
+app
+  .route("/bbs/:main_category")
   .get(
     asyncHandler(async (req, res) => {
       const subCategoryMap = {
@@ -54,12 +55,20 @@ app.route("/bbs/:main_category")
 
       const subCategory = subCategoryMap[req.query.sub_category] || "All";
       const query = subCategory === "All" ? {} : { subCategory };
-
-      const posts = await getModel(req.params.main_category).find(query).sort({ createdAt: -1 });
-
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = 15;
+      const model = getModel(req.params.main_category);
+      const documentCount = await model.countDocuments(query);
+      const posts = await model
+        .find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize);
       res.send({
         posts,
         count: posts.length,
+        totalPages: Math.ceil(documentCount / pageSize),
+        currentPage: page,
       });
     })
   )
