@@ -1,4 +1,4 @@
-GET http://localhost:3000/bbs/board?sub_category=all
+GET http://localhost:3000/bbs/board?sub_category=all&page=3
 
 ###
 
@@ -12,8 +12,8 @@ Content-Type: application/json
 {
   "subCategory": "팁",
   "writer": "운영자",
-  "title": "자유게시판 POST 테스트 33",
-  "content": "자유게시판 POST 테스트 33 입니다."
+  "title": "자유게시판 POST 테스트 34",
+  "content": "자유게시판 POST 테스트 34 입니다."
 }
 
 ###
