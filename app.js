@@ -41,6 +41,7 @@ app
   .get(
     asyncHandler(async (req, res) => {
       const subCategoryMap = {
+        all: "All",
         domestic: "국내",
         overseas: "국외",
         common: "일반",
@@ -53,22 +54,24 @@ app
         job_seeking: "구직",
       };
 
-      const subCategory = subCategoryMap[req.query.sub_category] || "All";
+      const { sub_category, page = 1 } = req.query;
+      const subCategory = subCategoryMap[sub_category];
       const query = subCategory === "All" ? {} : { subCategory };
-      const page = parseInt(req.query.page) || 1;
       const pageSize = 15;
+
       const model = getModel(req.params.main_category);
-      const documentCount = await model.countDocuments(query);
-      const posts = await model
+      const totalPostCount = await model.countDocuments(query);
+      const postList = await model
         .find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * pageSize)
         .limit(pageSize);
+
       res.send({
-        posts,
-        count: posts.length,
-        totalPages: Math.ceil(documentCount / pageSize),
-        currentPage: page,
+        postList,
+        totalPostCount,
+        page: parseInt(page),
+        totalPages: Math.ceil(totalPostCount / pageSize),
       });
     })
   )

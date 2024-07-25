@@ -1,4 +1,4 @@
-GET http://localhost:3000/bbs/board?sub_category=all&page=3
+GET http://localhost:3000/bbs/board?sub_category=tip&page=1
 
 ###
 
