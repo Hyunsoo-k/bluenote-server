@@ -58,10 +58,8 @@ app
       const subCategory = subCategoryMap[sub_category];
       const query = subCategory === "All" ? {} : { subCategory };
       const pageSize = 15;
-
-      const model = getModel(req.params.main_category);
-      const totalPostCount = await model.countDocuments(query);
-      const postList = await model
+      const totalPostCount = await getModel(req.main_category).countDocuments(query);
+      const postList = await getModel(req.main_category)
         .find(query)
         .sort({ createdAt: -1 })
         .skip((page - 1) * pageSize)
@@ -70,8 +68,8 @@ app
       res.send({
         postList,
         totalPostCount,
-        page: parseInt(page),
-        totalPages: Math.ceil(totalPostCount / pageSize),
+        currentPage: parseInt(page),
+        totalPageCount: Math.ceil(totalPostCount / pageSize),
       });
     })
   )
