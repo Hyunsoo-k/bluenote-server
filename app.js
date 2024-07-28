@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const multer = require("multer");
 
 const { NoticePost, NewsPost, BoardPost, PromotePost, JobPost } = require("./model/bbs.js");
 
@@ -53,29 +54,30 @@ app
         job_posting: "구인",
         job_seeking: "구직",
       };
-
-      const { sub_category, page = 1 } = req.query;
-      const subCategory = subCategoryMap[sub_category];
+      const mainCategory = req.params.main_category;
+      const subCategory = subCategoryMap[req.query.sub_category];
       const query = subCategory === "All" ? {} : { subCategory };
+      const currentPage = req.query.page || 1;
       const pageSize = 15;
-      const totalPostCount = await getModel(req.params.main_category).countDocuments(query);
-      const postList = await getModel(req.params.main_category)
+      const totalPostCount = await getModel(mainCategory).countDocuments(query);
+      const postList = await getModel(mainCategory)
         .find(query)
         .sort({ createdAt: -1 })
-        .skip((page - 1) * pageSize)
+        .skip((currentPage - 1) * pageSize)
         .limit(pageSize);
 
       res.send({
         postList,
         totalPostCount,
-        currentPage: parseInt(page),
+        currentPage: parseInt(currentPage),
         totalPageCount: Math.ceil(totalPostCount / pageSize),
       });
     })
   )
   .post(
     asyncHandler(async (req, res) => {
-      const newPost = await getModel(req.params.main_category).create(req.body);
+      const mainCategory = req.params.main_category;
+      const newPost = await getModel(mainCategory).create(req.body);
       res.status(201).send(newPost);
     })
   );
@@ -86,36 +88,47 @@ app
   .route("/bbs/:main_category/:id")
   .get(
     asyncHandler(async (req, res) => {
-      const post = await getModel(req.params.main_category).findById(req.params.id);
-      if (post) {
-        res.send(post);
-      } else {
+      const { main_category: mainCategory, id: postId } = req.params;
+      const post = await getModel(mainCategory).findById(postId);
+      
+      if (!post) {
         res.status(404).send({ message: "Cannot find given id." });
+        res.send(post);
       }
+
+      res.send({
+        mainCategory,
+        post
+      });
     })
   )
   .patch(
     asyncHandler(async (req, res) => {
-      const post = await getModel(req.params.main_category).findById(req.params.id);
-      if (post) {
-        Object.keys(req.body).forEach((key) => {
-          post[key] = req.body[key];
-        });
-        await post.save();
-        res.send(post);
-      } else {
+      const { main_category: mainCategory, id: postId } = req.params;
+      const post = await getModel(mainCategory).findById(postId);
+
+      if (!post) {
         res.status(404).send({ message: "Cannot find given id." });
       }
+
+      Object.keys(req.body).forEach((key) => {
+        post[key] = req.body[key];
+      });
+      await post.save();
+      res.send(post);
     })
   )
   .delete(
     asyncHandler(async (req, res) => {
-      const post = await getModel(req.params.main_category).findByIdAndDelete(req.params.id);
+      const { main_category: mainCategory, id: postId } = req.params;
+      const post = await getModel(mainCategory).findByIdAndDelete(postId);
+      
       if (post) {
+        res.status(404).send({ message: "Cannot find given id." })
         res.sendStatus(204);
-      } else {
-        res.status(404).send({ message: "Cannot find given id." });
       }
+
+      res.sendStatus(204);
     })
   );
 
@@ -125,24 +138,28 @@ app
   .route("/bbs/:main_category/:id/comment")
   .get(
     asyncHandler(async (req, res) => {
-      const post = await getModel(req.params.main_category).findById(req.params.id);
-      if (post.comment) {
-        res.send(post.comment);
-      } else {
+      const { main_category: mainCategory, id: postId } = req.params;
+      const post = await getModel(mainCategory).findById(postId);
+
+      if (!post.comment) {
         res.status(404).send({ message: "there no comments." });
       }
+
+      res.send(post.comment);
     })
   )
   .post(
     asyncHandler(async (req, res) => {
-      const post = await getModel(req.params.main_category).findById(req.params.id);
-      if (post) {
-        post.comment.push(req.body);
-        await post.save();
-        res.status(201).send(post);
-      } else {
+      const { main_category: mainCategory, id: postId } = req.params;
+      const post = await getModel(mainCategory).findById(postId);
+
+      if(!post) {
         res.status(404).send({ message: "Cannot find given id." });
       }
+
+      post.comment.push(req.body);
+        await post.save();
+        res.status(201).send(post);
     })
   );
 
@@ -152,38 +169,42 @@ app
   .route("/bbs/:main_category/:id/comment/:comment_id")
   .patch(
     asyncHandler(async (req, res) => {
-      const post = await getModel(req.params.main_category).findById(req.params.id);
-      if (post) {
-        const comment = post.comment.id(req.params.comment_id);
-        if (comment) {
-          Object.keys(req.body).forEach((key) => {
-            comment[key] = req.body[key];
-          });
-          await post.save();
-          res.send(comment);
-        } else {
-          res.status(404).send({ message: "Cannot find comment with given id." });
-        }
-      } else {
-        res.status(404).send({ message: "Cannot find post with given id." });
+      const { main_category: mainCategory, id: postId, comment_id: commentId } = req.params;
+
+      const post = await getModel(mainCategory).findById(postId);
+      if (!post) {
+        return res.status(404).send({ message: "Cannot find post with given id." });
       }
+
+      const comment = post.comment.id(commentId);
+      if (!comment) {
+        return res.status(404).send({ message: "Cannot find comment with given id." });
+      }
+
+      Object.keys(req.body).forEach((key) => {
+        comment[key] = req.body[key];
+      });
+
+      await post.save();
+      res.send(comment);
     })
   )
   .delete(
     asyncHandler(async (req, res) => {
-      const post = await getModel(req.params.main_category).findById(req.params.id);
-      if (post) {
-        const comment = post.comment.id(req.params.comment_id);
-        if (comment) {
-          post.comment.pull(comment._id);
-          await post.save();
-          res.sendStatus(204);
-        } else {
-          res.status(404).send({ message: "Cannot find comment with given id." });
-        }
-      } else {
+      const { main_category: mainCategory, id: postId, comment_id: commentId } = req.params;
+
+      const post = await getModel(mainCategory).findById(postId);
+      if (!post) {
         res.status(404).send({ message: "Cannot find given id." });
       }
+
+      const comment = post.id(commentId);
+      if (!comment) {
+        res.status(404).send({ message: "Cannot find comment with given id." });
+      }
+      post.comment.pull(comment._id);
+      await post.save();
+      res.sendStatus(204);
     })
   );
 
