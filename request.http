@@ -1,4 +1,4 @@
-GET http://localhost:3000/bbs/board?sub_category=tip&page=1
+GET http://localhost:3000/bbs/board/66a2ddb47fc1ca892ea8ba2a
 
 ###
 
@@ -10,19 +10,29 @@ POST https://bluenote-server.onrender.com/bbs/board
 Content-Type: application/json
 
 {
-  "subCategory": "팁",
+  "subCategory": "일반",
   "writer": "운영자",
-  "title": "자유게시판 POST 테스트 34",
-  "content": "자유게시판 POST 테스트 34 입니다."
+  "title": "자유게시판 POST 테스트 35",
+  "content": "자유게시판 POST 테스트 35 입니다."
 }
 
 ###
 
-GET https://bluenote-server.onrender.com/bbs/board/6699e30477fa34adc76c731b
+GET http://localhost:3000/bbs/board/6699ed04d5b61160c5755cc8/comment
 
 ###
 
-DELETE https://bluenote-server.onrender.com/bbs/board/66991430d824011666474c2f
+POST http://localhost:3000/bbs/board/6699ed04d5b61160c5755cc8/comment
+Content-Type: application/json
+
+{
+  "writer": "테스트",
+  "content": "자유게시판 POST 테스트 35 입니다."
+}
+
+###
+
+ https://bluenote-server.onrender.com/bbs/board/66a2ddb47fc1ca892ea8ba2a
 
 ###
 
