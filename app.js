@@ -59,7 +59,7 @@ app
       const query = subCategory === "All" ? {} : { subCategory };
       const currentPage = req.query.page || 1;
       const pageSize = 15;
-      const totalPostCount = await getModel(mainCategory).countDocuments(query);
+      const totalPostListCount = await getModel(mainCategory).countDocuments(query);
       const postList = await getModel(mainCategory)
         .find(query)
         .sort({ createdAt: -1 })
@@ -67,10 +67,12 @@ app
         .limit(pageSize);
 
       res.send({
+        mainCategory,
+        currentSubCategory,
         postList,
-        totalPostCount,
+        totalPostListCount,
         currentPage: parseInt(currentPage),
-        totalPageCount: Math.ceil(totalPostCount / pageSize),
+        totalPageCount: Math.ceil(totalPostListCount / pageSize),
       });
     })
   )
