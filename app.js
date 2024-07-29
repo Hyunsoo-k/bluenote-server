@@ -42,7 +42,7 @@ app
   .get(
     asyncHandler(async (req, res) => {
       const subCategoryMap = {
-        All: "All",
+        all: "All",
         domestic: "국내",
         overseas: "국외",
         common: "일반",
@@ -55,7 +55,7 @@ app
         job_seeking: "구직",
       };
       const mainCategory = req.params.main_category;
-      const subCategory = subCategoryMap[req.query.sub_category];
+      const subCategory = subCategoryMap[req.query.sub_category] || "All";
       const query = subCategory === "All" ? {} : { subCategory };
       const currentPage = req.query.page || 1;
       const pageSize = 15;
@@ -68,7 +68,7 @@ app
 
       res.send({
         mainCategory,
-        currentSubCategory,
+        subCategory,
         postList,
         totalPostListCount,
         currentPage: parseInt(currentPage),
