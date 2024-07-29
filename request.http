@@ -1,8 +1,8 @@
-GET http://localhost:3000/bbs/board/66a2ddb47fc1ca892ea8ba2a
+GET http://localhost:3000/bbs/board
 
 ###
 
-GET http://bluenote-server.onrender.com/bbs/board
+GET http://bluenote-server.onrender.com/bbs/board?sub_category=All&page=1
 
 ###
 
