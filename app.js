@@ -42,7 +42,7 @@ app
   .get(
     asyncHandler(async (req, res) => {
       const subCategoryMap = {
-        all: "All",
+        All: "All",
         domestic: "국내",
         overseas: "국외",
         common: "일반",
