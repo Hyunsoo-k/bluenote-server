@@ -38,7 +38,7 @@ const getModel = (mainCategory) => {
 // 게시글 목록 조회, 게시글 등록
 
 app
-  .route("/bbs/:main_category/post")
+  .route("/bbs/:main_category")
   .get(
     asyncHandler(async (req, res) => {
       const subCategoryMap = {
