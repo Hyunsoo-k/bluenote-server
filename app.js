@@ -38,7 +38,7 @@ const getModel = (mainCategory) => {
 // 게시글 목록 조회, 게시글 등록
 
 app
-  .route("/bbs/:main_category")
+  .route("/bbs/:main_category/post")
   .get(
     asyncHandler(async (req, res) => {
       const subCategoryMap = {
@@ -55,7 +55,7 @@ app
         job_seeking: "구직",
       };
       const mainCategory = req.params.main_category;
-      const subCategory = subCategoryMap[req.query.sub_category] || "All";
+      const subCategory = subCategoryMap[req.query.sub_category];
       const query = subCategory === "All" ? {} : { subCategory };
       const currentPage = req.query.page || 1;
       const pageSize = 15;
@@ -87,7 +87,7 @@ app
 // 게시글 조회, 게시글 수정, 게시글 삭제
 
 app
-  .route("/bbs/:main_category/:id")
+  .route("/bbs/post/:main_category")
   .get(
     asyncHandler(async (req, res) => {
       const { main_category: mainCategory, id: postId } = req.params;
