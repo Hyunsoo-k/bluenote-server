@@ -45,7 +45,7 @@ const NewsPostSchema = new mongoose.Schema(
   {
     subCategory: {
       type: String,
-      enum: ["국내", "국외", "All"],
+      enum: ["국내", "국외"],
       trim: true,
     },
     writer: {
@@ -80,7 +80,7 @@ const BoardPostSchema = new mongoose.Schema(
   {
     subCategory: {
       type: String,
-      enum: ["일반", "녹음", "팁", "All"],
+      enum: ["일반", "녹음", "팁"],
       trim: true,
     },
     writer: {
@@ -115,7 +115,7 @@ const PromotePostSchema = new mongoose.Schema(
   {
     subCategory: {
       type: String,
-      enum: ["밴드홍보", "앨범홍보", "재즈바홍보", "All"],
+      enum: ["밴드홍보", "앨범홍보", "재즈바홍보"],
       trim: true,
     },
     writer: {
@@ -150,7 +150,7 @@ const JobPostSchema = new mongoose.Schema(
   {
     subCategory: {
       type: String,
-      enum: ["구인", "구직", "All"],
+      enum: ["구인", "구직"],
       trim: true,
     },
     writer: {
