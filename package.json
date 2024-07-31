@@ -17,5 +17,6 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true
-  }
+  },
+  "proxy": "http://xxx"
 }
