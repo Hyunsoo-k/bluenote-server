@@ -1,8 +1,8 @@
-GET http://localhost:3000/bbs/board
+GET http://localhost:3000/bbs/board?sub_category=common&page=3
 
 ###
 
-GET http://bluenote-server.onrender.com/bbs/board?sub_category=All&page=1
+GET http://localhost:3000/bbs/board/post?sub_category=common&post_id=66a2ddb47fc1ca892ea8ba2a
 
 ###
 
@@ -12,8 +12,8 @@ Content-Type: application/json
 {
   "subCategory": "일반",
   "writer": "운영자",
-  "title": "자유게시판 POST 테스트 35",
-  "content": "자유게시판 POST 테스트 35 입니다."
+  "title": "자유게시판 POST 테스트 36",
+  "content": "자유게시판 POST 테스트 36 입니다."
 }
 
 ###

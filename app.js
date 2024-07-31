@@ -37,49 +37,48 @@ const getModel = (mainCategory) => {
 
 // 게시글 목록 조회, 게시글 등록
 
+const subCategoryMap = {
+  all: "All",
+  domestic: "국내",
+  overseas: "국외",
+  common: "일반",
+  record: "녹음",
+  tip: "팁",
+  band_promotion: "밴드홍보",
+  album_promotion: "앨범홍보",
+  jazzbar_promotion: "재즈바홍보",
+  job_posting: "구인",
+  job_seeking: "구직",
+};
+
 app
   .route("/bbs/:main_category")
   .get(
     asyncHandler(async (req, res) => {
-      const subCategoryMap = {
-        all: "All",
-        domestic: "국내",
-        overseas: "국외",
-        common: "일반",
-        record: "녹음",
-        tip: "팁",
-        band_promotion: "밴드홍보",
-        album_promotion: "앨범홍보",
-        jazzbar_promotion: "재즈바홍보",
-        job_posting: "구인",
-        job_seeking: "구직",
-      };
-      const mainCategory = req.params.main_category;
-      const subCategory = subCategoryMap[req.query.sub_category];
-      const query = subCategory === "All" ? {} : { subCategory };
-      const currentPage = req.query.page || 1;
+      const { main_category } = req.params;
+      const { sub_category = "all", page = 1 } = req.query;
+      const query = sub_category === "all" ? {} : { subCategory: subCategoryMap[sub_category] };
       const pageSize = 15;
-      const totalPostListCount = await getModel(mainCategory).countDocuments(query);
-      const postList = await getModel(mainCategory)
+      const totalPostCount = await getModel(main_category).countDocuments(query);
+      const postList = await getModel(main_category)
         .find(query)
         .sort({ createdAt: -1 })
-        .skip((currentPage - 1) * pageSize)
+        .skip((page - 1) * pageSize)
         .limit(pageSize);
-
       res.send({
-        mainCategory,
-        subCategory,
+        mainCategory: main_category,
+        subCategory: sub_category,
         postList,
-        totalPostListCount,
-        currentPage: parseInt(currentPage),
-        totalPageCount: Math.ceil(totalPostListCount / pageSize),
+        totalPostCount,
+        page: parseInt(page),
+        totalPageCount: Math.ceil(totalPostCount / pageSize),
       });
     })
   )
   .post(
     asyncHandler(async (req, res) => {
-      const mainCategory = req.params.main_category;
-      const newPost = await getModel(mainCategory).create(req.body);
+      const { main_category } = req.params;
+      const newPost = await getModel(main_category).create(req.body);
       res.status(201).send(newPost);
     })
   );
@@ -87,19 +86,19 @@ app
 // 게시글 조회, 게시글 수정, 게시글 삭제
 
 app
-  .route("/bbs/post/:main_category")
+  .route("/bbs/:main_category/post")
   .get(
     asyncHandler(async (req, res) => {
-      const { main_category: mainCategory, id: postId } = req.params;
-      const post = await getModel(mainCategory).findById(postId);
+      const { main_category } = req.params;
+      const { sub_category, post_id } = req.query;
+      const query = { sub_category };
+      const post = await getModel(main_category).find(query).findById(post_id);
       
       if (!post) {
         res.status(404).send({ message: "Cannot find given id." });
-        res.send(post);
       }
 
       res.send({
-        mainCategory,
         post
       });
     })
