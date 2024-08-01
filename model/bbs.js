@@ -34,7 +34,8 @@ const NoticePostSchema = new mongoose.Schema(
       minLength: 1,
       maxLength: 5000,
       trim: true,
-    }
+    },
+    comment: [CommentSchema]
   },
   {
     timestamps: true,
