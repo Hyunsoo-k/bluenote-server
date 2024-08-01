@@ -90,9 +90,8 @@ app
   .get(
     asyncHandler(async (req, res) => {
       const { main_category } = req.params;
-      const { sub_category, post_id } = req.query;
-      const query = { sub_category };
-      const post = await getModel(main_category).find(query).findById(post_id);
+      const { post_id } = req.query;
+      const post = await getModel(main_category).findById(post_id);
       
       if (!post) {
         res.status(404).send({ message: "Cannot find given id." });
@@ -105,8 +104,9 @@ app
   )
   .patch(
     asyncHandler(async (req, res) => {
-      const { main_category: mainCategory, id: postId } = req.params;
-      const post = await getModel(mainCategory).findById(postId);
+      const { main_category } = req.params;
+      const { post_id } = req.query;
+      const post = await getModel(main_category).findById(post_id);
 
       if (!post) {
         res.status(404).send({ message: "Cannot find given id." });
@@ -121,8 +121,8 @@ app
   )
   .delete(
     asyncHandler(async (req, res) => {
-      const { main_category: mainCategory, id: postId } = req.params;
-      const post = await getModel(mainCategory).findByIdAndDelete(postId);
+      const { main_category, post_id } = req.params;
+      const post = await getModel(main_category).findByIdAndDelete(post_id);
       
       if (post) {
         res.status(404).send({ message: "Cannot find given id." })
@@ -139,8 +139,8 @@ app
   .route("/bbs/:main_category/:id/comment")
   .get(
     asyncHandler(async (req, res) => {
-      const { main_category: mainCategory, id: postId } = req.params;
-      const post = await getModel(mainCategory).findById(postId);
+      const { main_category, post_id } = req.params;
+      const post = await getModel(main_category).findById(post_id);
 
       if (!post.comment) {
         res.status(404).send({ message: "there no comments." });
