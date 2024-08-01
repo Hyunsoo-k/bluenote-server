@@ -1,8 +1,8 @@
-GET http://localhost:3000/bbs/board?sub_category=common&page=3
+GET http://localhost:3000/bbs/board?sub_category=common&page=1
 
 ###
 
-GET http://localhost:3000/bbs/board/post?sub_category=common&post_id=66a2ddb47fc1ca892ea8ba2a
+GET http://localhost:3000/bbs/board/post?post_id=66a2ddb47fc1ca892ea8ba2a
 
 ###
 
