@@ -1,4 +1,4 @@
-GET http://localhost:3000/bbs/board?sub_category=common&page=1
+GET https://bluenote-server.onrender.com/bbs/promote?sub_category=all&page=1
 
 ###
 
@@ -6,14 +6,14 @@ GET http://localhost:3000/bbs/board/post?post_id=66a2ddb47fc1ca892ea8ba2a
 
 ###
 
-POST https://bluenote-server.onrender.com/bbs/board
+POST https://bluenote-server.onrender.com/bbs/promote
 Content-Type: application/json
 
 {
-  "subCategory": "일반",
+  "subCategory": "밴드홍보",
   "writer": "운영자",
-  "title": "자유게시판 POST 테스트 36",
-  "content": "자유게시판 POST 테스트 36 입니다."
+  "title": "홍보게시판 POST 테스트2",
+  "content": "홍보게시판 POST 테스트2 입니다"
 }
 
 ###
@@ -46,3 +46,7 @@ Content-Type: application/json
 {
   "content": "자유게시판 댓글 수정 테스트"
 }
+
+###
+
+DELETE http://bluenote-server.onrender.com/bbs/notice/post?post_id=6699e25ebc1c26080d45d9d9

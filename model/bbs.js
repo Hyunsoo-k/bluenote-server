@@ -68,6 +68,8 @@ const NewsPostSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
+      minLength: 1,
+      maxLength: 5000,
       trim: true,
     },
     comment: [CommentSchema]
@@ -103,6 +105,8 @@ const BoardPostSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
+      minLength: 1,
+      maxLength: 5000,
       trim: true,
     },
     comment: [CommentSchema]
@@ -138,6 +142,8 @@ const PromotePostSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
+      minLength: 1,
+      maxLength: 5000,
       trim: true,
     },
     comment: [CommentSchema]
@@ -173,6 +179,8 @@ const JobPostSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
+      minLength: 1,
+      maxLength: 5000,
       trim: true,
     },
     comment: [CommentSchema]
