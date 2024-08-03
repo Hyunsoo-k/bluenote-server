@@ -24,7 +24,7 @@ const asyncHandler = (handler) => {
   };
 };
 
-const getModel = (mainCategory) => {
+const getModel = (main_category) => {
   const modelMap = {
     notice: NoticePost,
     news: NewsPost,
@@ -32,7 +32,7 @@ const getModel = (mainCategory) => {
     promote: PromotePost,
     job: JobPost,
   };
-  return modelMap[mainCategory];
+  return modelMap[main_category];
 };
 
 // 게시글 목록 조회, 게시글 등록
@@ -79,6 +79,7 @@ app
     asyncHandler(async (req, res) => {
       const { main_category } = req.params;
       const newPost = await getModel(main_category).create(req.body);
+      console.log("post done");
       res.status(201).send(newPost);
     })
   );
@@ -124,9 +125,8 @@ app
       const { main_category, post_id } = req.params;
       const post = await getModel(main_category).findByIdAndDelete(post_id);
       
-      if (post) {
+      if (!post) {
         res.status(404).send({ message: "Cannot find given id." })
-        res.sendStatus(204);
       }
 
       res.sendStatus(204);
