@@ -6,7 +6,7 @@ const NoticePostSchema = new mongoose.Schema(
   {
     subCategory: {
       type: String,
-      enum: ["All"],
+      enum: ["notification"],
       trim: true,
     },
     writer: {
