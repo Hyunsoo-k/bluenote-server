@@ -39,6 +39,7 @@ const getModel = (main_category) => {
 
 const subCategoryMap = {
   all: "All",
+  notification: "공지",
   domestic: "국내",
   overseas: "국외",
   common: "일반",
