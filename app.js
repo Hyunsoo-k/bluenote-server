@@ -10,8 +10,8 @@ dotenv.config();
 mongoose.connect(process.env.DATABASE_URL).then(() => console.log("Connected to DB"));
 
 const app = express();
-app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000", "https://bluenote-server.onrender.com"] }));
+app.use(express.json());
 
 const asyncHandler = (handler) => {
   return async (req, res) => {
