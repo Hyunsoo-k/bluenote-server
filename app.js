@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const bbsRouter = require("./routes/bbs");
 const authRouter = require("./routes/auth");
+const userRouter = require("./routes/user.js");
 
 dotenv.config();
 mongoose.connect(process.env.DATABASE_URL).then(() => console.log("Connected to DB"));
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use("/bbs", bbsRouter);
 app.use("/auth", authRouter);
+app.use("/user", userRouter);
 
 app.listen(process.env.PORT || 3000, () => console.log("Server Started"));
 
