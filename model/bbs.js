@@ -4,18 +4,20 @@ const { CommentSchema } = require("./comment.js");
 
 const NoticePostSchema = new mongoose.Schema(
   {
-    subCategory: {
-      type: String,
-      enum: ["공지"],
-      trim: true,
-    },
     writer: {
-      type: String,
-      required: true
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
-    title: {
+    subCategory: {
+      required: true,
       type: String,
       required: true,
+      enum: ["공지"],
+    },
+    title: {
+      required: true,
+      type: String,
       minLength: 2,
       maxLength: 40,
       trim: true,
@@ -29,13 +31,13 @@ const NoticePostSchema = new mongoose.Schema(
       default: 0,
     },
     content: {
-      type: String,
       required: true,
+      type: String,
       minLength: 1,
       maxLength: 5000,
       trim: true,
     },
-    comment: [CommentSchema]
+    comment: [CommentSchema],
   },
   {
     timestamps: true,
@@ -44,13 +46,16 @@ const NoticePostSchema = new mongoose.Schema(
 
 const NewsPostSchema = new mongoose.Schema(
   {
-    subCategory: {
-      type: String,
-      enum: ["국내", "국외"],
-      trim: true,
-    },
     writer: {
-      type: String
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    subCategory: {
+      required: true,
+      type: String,
+      trim: true,
+      enum: ["국내", "국외"],
     },
     title: {
       type: String,
@@ -66,13 +71,13 @@ const NewsPostSchema = new mongoose.Schema(
       default: 0,
     },
     content: {
-      type: String,
       required: true,
+      type: String,
       minLength: 1,
       maxLength: 5000,
       trim: true,
     },
-    comment: [CommentSchema]
+    comment: [CommentSchema],
   },
   {
     timestamps: true,
@@ -81,17 +86,20 @@ const NewsPostSchema = new mongoose.Schema(
 
 const BoardPostSchema = new mongoose.Schema(
   {
-    subCategory: {
-      type: String,
-      enum: ["일반", "녹음", "팁"],
-      trim: true,
-    },
     writer: {
-      type: String
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    subCategory: {
+      required: true,
+      type: String,
+      trim: true,
+      enum: ["일반", "녹음", "팁"],
     },
     title: {
-      type: String,
       required: true,
+      type: String,
       trim: true,
     },
     views: {
@@ -103,13 +111,13 @@ const BoardPostSchema = new mongoose.Schema(
       default: 0,
     },
     content: {
-      type: String,
       required: true,
+      type: String,
       minLength: 1,
       maxLength: 5000,
       trim: true,
     },
-    comment: [CommentSchema]
+    comment: [CommentSchema],
   },
   {
     timestamps: true,
@@ -118,17 +126,20 @@ const BoardPostSchema = new mongoose.Schema(
 
 const PromotePostSchema = new mongoose.Schema(
   {
-    subCategory: {
-      type: String,
-      enum: ["밴드홍보", "앨범홍보", "재즈바홍보"],
-      trim: true,
-    },
     writer: {
-      type: String
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    subCategory: {
+      required: true,
+      type: String,
+      trim: true,
+      enum: ["밴드홍보", "앨범홍보", "재즈바홍보"],
     },
     title: {
-      type: String,
       required: true,
+      type: String,
       trim: true,
     },
     views: {
@@ -140,13 +151,13 @@ const PromotePostSchema = new mongoose.Schema(
       default: 0,
     },
     content: {
-      type: String,
       required: true,
+      type: String,
       minLength: 1,
       maxLength: 5000,
       trim: true,
     },
-    comment: [CommentSchema]
+    comment: [CommentSchema],
   },
   {
     timestamps: true,
@@ -155,17 +166,20 @@ const PromotePostSchema = new mongoose.Schema(
 
 const JobPostSchema = new mongoose.Schema(
   {
-    subCategory: {
-      type: String,
-      enum: ["구인", "구직"],
-      trim: true,
-    },
     writer: {
-      type: String
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    subCategory: {
+      required: true,
+      type: String,
+      trim: true,
+      enum: ["구인", "구직"],
     },
     title: {
-      type: String,
       required: true,
+      type: String,
       trim: true,
     },
     views: {
@@ -177,13 +191,13 @@ const JobPostSchema = new mongoose.Schema(
       default: 0,
     },
     content: {
-      type: String,
       required: true,
+      type: String,
       minLength: 1,
       maxLength: 5000,
       trim: true,
     },
-    comment: [CommentSchema]
+    comment: [CommentSchema],
   },
   {
     timestamps: true,
