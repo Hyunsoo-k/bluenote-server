@@ -3,11 +3,9 @@ const mongoose = require("mongoose");
 const CommentSchema = new mongoose.Schema(
   {
     writer: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
-      trim: true,
-      minLength: 2,
-      maxLength: 30,
+      ref: "User",
     },
     content: {
       type: String,
@@ -15,10 +13,10 @@ const CommentSchema = new mongoose.Schema(
       trim: true,
       minLength: 1,
       maxLength: 1000,
-    }
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
