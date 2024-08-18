@@ -4,3 +4,6 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
+
+# 환경 변수 파일
+.env
