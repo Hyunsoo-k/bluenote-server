@@ -1,10 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 
 const { asyncHandler } = require("../variable/erroHandler.js");
-
-const dotenv = require("dotenv");
 const { User } = require("../model/user.js");
 
 const router = express.Router();
@@ -27,17 +26,17 @@ router.route("/signIn").post(
       return res.status(401).send({ message: "given password does not match" });
     }
 
-    const payload = { 
-      user_id: user._id,
+    const payload = {
+      user_id: user._id.toString(),
       nickname: user.nickname,
-      role: user.role
+      role: user.role,
     };
     const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "24h" });
 
     res.status(200).send({
       token,
-      user: { user_id: user._id, email: user.email, nickname: user.nickname, role: user.role }
-      });
+      user: { user_id: user._id.toString(), email: user.email, nickname: user.nickname, role: user.role },
+    });
   })
 );
 
