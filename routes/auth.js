@@ -33,10 +33,7 @@ router.route("/signIn").post(
     };
     const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "24h" });
 
-    res.status(200).send({
-      token,
-      user: { user_id: user._id.toString(), email: user.email, nickname: user.nickname, role: user.role },
-    });
+    res.status(200).send({ token });
   })
 );
 
