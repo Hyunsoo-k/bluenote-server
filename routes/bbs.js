@@ -12,8 +12,8 @@ const router = express.Router();
 router.route("/:mainCategory").get(
   asyncHandler(async (req, res) => {
     const { mainCategory } = req.params;
-    const { subCategory = "all", page = 1 } = req.query;
-    const filter = subCategory === "all" ? {} : { subCategory: subCategoryMap[subCategory] };
+    const { subCategory = "All", page = 1 } = req.query;
+    const filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
     const totalPostCount = await getModel(mainCategory).countDocuments(filter);
     const postList = await getModel(mainCategory)
       .find(filter)

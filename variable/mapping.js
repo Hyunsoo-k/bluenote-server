@@ -12,18 +12,18 @@ const getModel = (main_category) => {
 };
 
 const subCategoryMap = {
-  all: "All",
+  All: "All",
   notification: "공지",
   domestic: "국내",
   overseas: "국외",
   common: "일반",
   record: "녹음",
   tip: "팁",
-  band_promotion: "밴드홍보",
-  album_promotion: "앨범홍보",
-  jazzbar_promotion: "재즈바홍보",
-  job_posting: "구인",
-  job_seeking: "구직",
+  bandPromotion: "밴드홍보",
+  albumPromotion: "앨범홍보",
+  jazzbarPromotion: "재즈바홍보",
+  jobPosting: "구인",
+  jobSeeking: "구직",
 };
 
 
