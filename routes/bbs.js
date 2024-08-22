@@ -20,7 +20,11 @@ router.route("/:mainCategory").get(
       .sort({ createdAt: -1 })
       .skip((page - 1) * 15)
       .limit(15)
-      .populate({ path: "writer", select: "_id nickname"})
+      .populate({ path: "writer", select: "_id nickname" })
+      .populate({
+        path: "comment.writer",
+        select: "_id nickname",
+      })
       .lean();
 
     return res.send({
@@ -41,7 +45,10 @@ router
   .get(
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
-      const post = await getModel(mainCategory).findById(post_id).populate({ path: "writer", select: "_id nickname" }).lean();
+      const post = await getModel(mainCategory)
+        .findById(post_id)
+        .populate({ path: "writer", select: "_id nickname" })
+        .lean();
 
       if (!post) {
         return res.status(404).send({ message: "Cannot find post" });
@@ -55,19 +62,21 @@ router
       const { mainCategory, post_id } = req.params;
       const { token, payload } = getTokenAndPayload(req);
       const post = await getModel(mainCategory).findById(post_id);
-  
+
       if (!post) {
         return res.status(404).send({ message: "Cannot find post." });
       }
-  
+
       await post.populate({ path: "writer", select: "_id nickname" });
-  
+
       if (!token || post.writer._id.toString() !== payload.user_id) {
         return res.status(401).send({ message: "Unauthorized." });
       }
-  
-      const editedPost = await getModel(mainCategory).findByIdAndUpdate(post_id, { $set: req.body }, { new: true }).lean();
-  
+
+      const editedPost = await getModel(mainCategory)
+        .findByIdAndUpdate(post_id, { $set: req.body }, { new: true })
+        .lean();
+
       return res.send(editedPost);
     })
   )
