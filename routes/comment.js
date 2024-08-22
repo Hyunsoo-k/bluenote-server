@@ -24,7 +24,7 @@ router.route("/").post(
 
     const newComment = {
       ...req.body,
-      writer: payload.user_id
+      writer: payload.nickname
     };
 
     post.comment.push(newComment);
