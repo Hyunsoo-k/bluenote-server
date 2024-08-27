@@ -14,6 +14,7 @@ router.route("/").get(
     return res.send({
       email: user.email,
       nickname: user.nickname,
+      createdAt: user.createdAt,
       isAdmin
     })
   })
