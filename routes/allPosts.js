@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.route("/").get(
   asyncHandler(async(req, res) => {
-    const { page } = req.query;
+    const { page = 1 } = req.query;
     const { payload } = getTokenAndPayload(req);
     const allPosts = await getAllPosts(payload.user_id, Number(page))
 
