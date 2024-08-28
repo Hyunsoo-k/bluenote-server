@@ -1,6 +1,6 @@
 const { NoticePost, NewsPost, BoardPost, PromotePost, JobPost } = require("../model/bbs.js");
 
-async function getAllPosts(user_id, page) {
+async function getMyPostList(user_id, page) {
   const noticePosts = await NoticePost.find({ writer: user_id }).sort({ createdAt: -1 }).lean();
   const newsPosts = await NewsPost.find({ writer: user_id }).sort({ createdAt: -1 }).lean();
   const boardPosts = await BoardPost.find({ writer: user_id }).sort({ createdAt: -1 }).lean();
@@ -22,7 +22,7 @@ async function getAllPosts(user_id, page) {
   const endIndex = startIndex + limit;
   const paginatedPosts = allPosts.slice(startIndex, endIndex);
 
-  return paginatedPosts;
+  return { paginatedPosts, totalPostCount: allPosts.length };
 }
 
-module.exports = { getAllPosts };
+module.exports = { getMyPostList };

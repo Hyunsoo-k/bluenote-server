@@ -9,10 +9,14 @@ const NoticePostSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
+    mainCategory: {
+      type: String,
+      required: true,
+      default: "notice"
+    },
     subCategory: {
       required: true,
       type: String,
-      required: true,
       enum: ["공지"],
     },
     title: {
@@ -50,6 +54,11 @@ const NewsPostSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
+    },
+    mainCategory: {
+      type: String,
+      required: true,
+      default: "news"
     },
     subCategory: {
       required: true,
@@ -91,6 +100,11 @@ const BoardPostSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
+    mainCategory: {
+      type: String,
+      required: true,
+      default: "board"
+    },
     subCategory: {
       required: true,
       type: String,
@@ -131,6 +145,11 @@ const PromotePostSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
+    mainCategory: {
+      type: String,
+      required: true,
+      default: "promote"
+    },
     subCategory: {
       required: true,
       type: String,
@@ -170,6 +189,11 @@ const JobPostSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
+    },
+    mainCategory: {
+      type: String,
+      required: true,
+      default: "job"
     },
     subCategory: {
       required: true,
