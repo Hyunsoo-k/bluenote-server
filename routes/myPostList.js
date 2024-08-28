@@ -14,7 +14,7 @@ router.route("/").get(
 
     res.send({
       postList,
-      totalPostCount: postList.length,
+      totalPostCount,
       page: parseInt(page),
       totalPageCount: Math.ceil(totalPostCount / 15),
     });
