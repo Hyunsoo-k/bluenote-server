@@ -17,7 +17,12 @@ async function getAllPosts(user_id, page) {
 
   allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  return allPosts;
+  const limit = 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedPosts = allPosts.slice(startIndex, endIndex);
+
+  return paginatedPosts;
 }
 
 module.exports = { getAllPosts };
