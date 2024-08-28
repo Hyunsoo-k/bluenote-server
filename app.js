@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/bbs", bbsRouter);
-app.use("/allPosts", allPostsRouter);
+app.use("/myAllPosts", allPostsRouter);
 
 app.listen(process.env.PORT || 3000, () => console.log("Server Started"));
 
