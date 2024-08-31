@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.route("/").get(
   asyncHandler(async(req, res) => {
-    const { payload, isAdmin } = getTokenAndPayload(req);
+    const { payload } = getTokenAndPayload(req);
     const user = await User.findById(payload.user_id).lean();
 
     return res.send({
