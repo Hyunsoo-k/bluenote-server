@@ -7,9 +7,8 @@ dotenv.config();
 const getTokenAndPayload = (req) => {
   const token = req.headers.authorization.split(" ")[1];
   const payload = jwt.verify(token, process.env.SECRET_KEY);
-  const isAdmin = payload.role === 1;
 
-  return { token, payload, isAdmin };
+  return { token, payload };
 }
 
 module.exports = { getTokenAndPayload };
