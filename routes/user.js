@@ -12,10 +12,11 @@ router.route("/").get(
     const user = await User.findById(payload.user_id).lean();
 
     return res.send({
+      user_id: user._id,
       email: user.email,
       nickname: user.nickname,
       createdAt: user.createdAt,
-      isAdmin
+      role: user.role
     })
   })
 )
