@@ -58,7 +58,7 @@ router
         return res.status(404).send({ message: "Cannot find post" });
       }
 
-      return res.send({ post });
+      return res.send({ ...post });
     })
   )
   .patch(
