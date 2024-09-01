@@ -86,16 +86,18 @@ router
   )
   .delete(
     asyncHandler(async (req, res) => {
-      const { mainCategory, postId } = req.params;
-      const { token, payload, isAdmin } = getTokenAndPayload(req);
-      const post = await getModel(mainCategory).findById(postId);
+      const { mainCategory, post_id } = req.params;
+      const { token, payload } = getTokenAndPayload(req);
+      const post = await getModel(mainCategory).findById(post_id);
+      console.log(post);
 
       if (!post) {
         return res.status(404).send({ message: "Cannot find post." });
       }
 
-      if (isAdmin) {
-        await getModel(mainCategory).findByIdAndDelete(postId);
+      if (payload.role) {
+        await getModel(mainCategory).findByIdAndDelete(post_id);
+
         return res.sendStatus(204);
       }
 
@@ -105,7 +107,7 @@ router
         return res.status(401).send({ message: "Unauthorized" });
       }
 
-      getModel(mainCategory).findByIdAndDelete(postId);
+      getModel(mainCategory).findByIdAndDelete(post_id);
       return res.sendStatus(204);
     })
   );
