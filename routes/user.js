@@ -2,7 +2,7 @@ const express = require("express");
 
 const { User } = require("../model/user.js");
 const { getTokenAndPayload } = require("../variable/certification.js");
-const { asyncHandler } = require("../variable/erroHandler.js");
+const { asyncHandler } = require("../variable/asyncHandler.js");
 
 const router = express.Router();
 

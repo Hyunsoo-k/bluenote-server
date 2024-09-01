@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
-const { asyncHandler } = require("../variable/erroHandler.js");
+const { asyncHandler } = require("../variable/asyncHandler.js");
 const { User } = require("../model/user.js");
 
 const router = express.Router();

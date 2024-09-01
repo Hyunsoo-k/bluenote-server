@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { asyncHandler } = require("../variable/erroHandler.js");
+const { asyncHandler } = require("../variable/asyncHandler.js");
 const { getTokenAndPayload } = require("../variable/certification.js");
 const { getMyPostList } = require("../variable/getMyPostList.js");
 
