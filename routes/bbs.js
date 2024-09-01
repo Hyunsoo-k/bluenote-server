@@ -2,7 +2,7 @@ const express = require("express");
 
 const { getModel, subCategoryMap } = require("../variable/mapping.js");
 const { getTokenAndPayload } = require("../variable/certification.js");
-const { asyncHandler } = require("../variable/erroHandler.js");
+const { asyncHandler } = require("../variable/asyncHandler.js");
 const commentRoutes = require("./comment.js");
 
 const router = express.Router();
