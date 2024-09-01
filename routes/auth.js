@@ -17,13 +17,13 @@ router.route("/signIn").post(
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).send({ message: "can not find with given email" });
+      return res.status(404).send({ message: "이메일을 찾을 수 없습니다." });
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
-      return res.status(401).send({ message: "given password does not match" });
+      return res.status(401).send({ message: "비밀번호가 일치하지 않습니다." });
     }
 
     const payload = {
@@ -46,11 +46,11 @@ router.route("/signUp").post(
     const isNicknameExist = await User.findOne({ nickname });
 
     if (isEmailExist) {
-      return res.status(409).send({ message: "Email already exists." });
+      return res.status(409).send({ message: "이미 존재하는 이메일 입니다." });
     }
 
     if (isNicknameExist) {
-      return res.status(409).send({ message: "Nickname already exists." });
+      return res.status(409).send({ message: "이미 존재하는 닉네임 입니다." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

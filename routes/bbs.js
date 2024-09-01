@@ -55,7 +55,7 @@ router
         .lean();
 
       if (!post) {
-        return res.status(404).send({ message: "Cannot find post" });
+        return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
 
       return res.send({ ...post });
@@ -68,7 +68,7 @@ router
       const post = await getModel(mainCategory).findById(post_id);
 
       if (!post) {
-        return res.status(404).send({ message: "Cannot find post." });
+        return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
 
       await post.populate({ path: "writer", select: "_id nickname" });
@@ -92,7 +92,7 @@ router
       console.log(post);
 
       if (!post) {
-        return res.status(404).send({ message: "Cannot find post." });
+        return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
 
       if (payload.role) {
