@@ -24,7 +24,7 @@ router.route("/").post(
 
     const newComment = {
       ...req.body,
-      writer: payload.user_id
+      writer: payload._id
     };
 
     post.comment.push(newComment);
@@ -53,7 +53,7 @@ router
         return res.status(404).send({ message: "Cannot find comment." });
       }
 
-      if (!token || comment.writer.toString() !== payload.user_id) {
+      if (!token || comment.writer.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
       }
 
@@ -84,7 +84,7 @@ router
         return res.sendStatus(204);
       }
 
-      if (!token || comment.writer.toString() !== payload.user_id) {
+      if (!token || comment.writer.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
       }
 

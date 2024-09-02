@@ -48,10 +48,7 @@ router
       const post = await getModel(mainCategory)
         .findById(post_id)
         .populate({ path: "writer", select: "_id nickname" })
-        .populate({
-          path: "comment.writer",
-          select: "_id nickname",
-        })
+        .populate({ path: "comment.writer", select: "_id nickname" })
         .lean();
 
       if (!post) {
@@ -65,15 +62,15 @@ router
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
       const { token, payload } = getTokenAndPayload(req);
-      const post = await getModel(mainCategory).findById(post_id);
+      const post = await getModel(mainCategory)
+        .findById(post_id)
+        .populate({ path: "writer", select: "_id nickname" });
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
 
-      await post.populate({ path: "writer", select: "_id nickname" });
-
-      if (!token || post.writer._id.toString() !== payload.user_id) {
+      if (!token || post.writer._id.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
       }
 
@@ -103,7 +100,7 @@ router
 
       await post.populate("writer");
 
-      if (!token || post.writer._id.toString() !== payload.user_id) {
+      if (!token || post.writer._id.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized" });
       }
 
@@ -123,7 +120,7 @@ router.route("/:mainCategory/post").post(
       return res.status(401).send({ message: "Unauthorized." });
     }
 
-    const newPost = await getModel(mainCategory).create({ ...req.body, writer: payload.user_id });
+    const newPost = await getModel(mainCategory).create({ ...req.body, writer: payload._id });
 
     await newPost.populate("writer");
 
