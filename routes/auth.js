@@ -17,7 +17,7 @@ router.route("/signIn").post(
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).send({ message: "이메일을 찾을 수 없습니다." });
+      return res.status(404).send({ message: "등록되지 않은 이메일 입니다." });
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
