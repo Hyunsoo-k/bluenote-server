@@ -15,7 +15,7 @@ router.route("/signIn").post(
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-
+ 
     if (!user) {
       return res.status(404).send({ message: "등록되지 않은 이메일 입니다." });
     }
@@ -27,7 +27,7 @@ router.route("/signIn").post(
     }
 
     const payload = {
-      user_id: user._id.toString(),
+      _id: user._id.toString(),
       nickname: user.nickname,
       role: user.role,
     };

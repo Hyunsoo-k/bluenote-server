@@ -9,10 +9,10 @@ const router = express.Router();
 router.route("/").get(
   asyncHandler(async(req, res) => {
     const { payload } = getTokenAndPayload(req);
-    const user = await User.findById(payload.user_id).lean();
+    const user = await User.findById(payload._id).lean();
 
     return res.send({
-      user_id: user._id,
+      _id: user._id,
       email: user.email,
       nickname: user.nickname,
       createdAt: user.createdAt,

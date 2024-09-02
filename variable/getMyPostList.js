@@ -20,9 +20,9 @@ async function getMyPostList(user_id, page) {
   const limit = 10;
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
-  const paginatedPosts = allPosts.slice(startIndex, endIndex);
+  const postList = allPosts.slice(startIndex, endIndex);
 
-  return { paginatedPosts, totalPostCount: allPosts.length };
+  return { postList, totalPostCount: allPosts.length };
 }
 
 module.exports = { getMyPostList };

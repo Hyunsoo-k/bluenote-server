@@ -10,7 +10,7 @@ router.route("/").get(
   asyncHandler(async (req, res) => {
     const { page = 1 } = req.query;
     const { payload } = getTokenAndPayload(req);
-    const { paginatedPosts: postList, totalPostCount } = await getMyPostList(payload.user_id, Number(page));
+    const { postList, totalPostCount } = await getMyPostList(payload._id, Number(page));
 
     res.send({
       postList,
