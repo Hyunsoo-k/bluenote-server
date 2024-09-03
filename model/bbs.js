@@ -41,7 +41,7 @@ const NoticePostSchema = new mongoose.Schema(
       maxLength: 1000000,
       trim: true,
     },
-    comment: [CommentSchema],
+    commentList: [CommentSchema],
   },
   {
     timestamps: true,
@@ -86,7 +86,7 @@ const NewsPostSchema = new mongoose.Schema(
       maxLength: 1000000,
       trim: true,
     },
-    comment: [CommentSchema],
+    commentList: [CommentSchema],
   },
   {
     timestamps: true,
@@ -131,7 +131,7 @@ const BoardPostSchema = new mongoose.Schema(
       maxLength: 1000000,
       trim: true,
     },
-    comment: [CommentSchema],
+    commentList: [CommentSchema],
   },
   {
     timestamps: true,
@@ -176,7 +176,7 @@ const PromotePostSchema = new mongoose.Schema(
       maxLength: 1000000,
       trim: true,
     },
-    comment: [CommentSchema],
+    commentList: [CommentSchema],
   },
   {
     timestamps: true,
@@ -221,7 +221,7 @@ const JobPostSchema = new mongoose.Schema(
       maxLength: 1000000,
       trim: true,
     },
-    comment: [CommentSchema],
+    commentList: [CommentSchema],
   },
   {
     timestamps: true,

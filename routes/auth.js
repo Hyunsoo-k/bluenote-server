@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
-const { asyncHandler } = require("../variable/asyncHandler.js");
+const { asyncHandler } = require("../utils/asyncHandler.js");
 const { User } = require("../model/user.js");
 
 const router = express.Router();
@@ -15,7 +15,7 @@ router.route("/signIn").post(
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
- 
+
     if (!user) {
       return res.status(404).send({ message: "등록되지 않은 이메일 입니다." });
     }

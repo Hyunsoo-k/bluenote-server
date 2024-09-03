@@ -1,13 +1,13 @@
 const express = require("express");
 
 const { User } = require("../model/user.js");
-const { getTokenAndPayload } = require("../variable/certification.js");
-const { asyncHandler } = require("../variable/asyncHandler.js");
+const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
+const { asyncHandler } = require("../utils/asyncHandler.js");
 
 const router = express.Router();
 
 router.route("/").get(
-  asyncHandler(async(req, res) => {
+  asyncHandler(async (req, res) => {
     const { payload } = getTokenAndPayload(req);
     const user = await User.findById(payload._id).lean();
 
@@ -16,9 +16,9 @@ router.route("/").get(
       email: user.email,
       nickname: user.nickname,
       createdAt: user.createdAt,
-      role: user.role
-    })
+      role: user.role,
+    });
   })
-)
+);
 
 module.exports = router;

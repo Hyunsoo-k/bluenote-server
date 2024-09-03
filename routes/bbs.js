@@ -1,8 +1,8 @@
 const express = require("express");
 
-const { getModel, subCategoryMap } = require("../variable/mapping.js");
-const { getTokenAndPayload } = require("../variable/certification.js");
-const { asyncHandler } = require("../variable/asyncHandler.js");
+const { getModel, subCategoryMap } = require("../utils/mapping.js");
+const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
+const { asyncHandler } = require("../utils/asyncHandler.js");
 const commentRoutes = require("./comment.js");
 
 const router = express.Router();
@@ -22,7 +22,7 @@ router.route("/:mainCategory").get(
       .limit(15)
       .populate({ path: "writer", select: "_id nickname" })
       .populate({
-        path: "comment.writer",
+        path: "commentList.writer",
         select: "_id nickname",
       })
       .lean();
@@ -62,9 +62,7 @@ router
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
       const { token, payload } = getTokenAndPayload(req);
-      const post = await getModel(mainCategory)
-        .findById(post_id)
-        .populate({ path: "writer", select: "_id nickname" });
+      const post = await getModel(mainCategory).findById(post_id).populate({ path: "writer", select: "_id nickname" });
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
@@ -129,6 +127,7 @@ router.route("/:mainCategory/post").post(
 );
 
 // 댓글 라우터
+
 router.use("/:mainCategory/:post_id/comment", commentRoutes);
 
 module.exports = router;
