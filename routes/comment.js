@@ -1,8 +1,8 @@
 const express = require("express");
 
-const { getModel } = require("../variable/mapping.js");
-const { getTokenAndPayload } = require("../variable/certification.js");
-const { asyncHandler } = require("../variable/asyncHandler.js");
+const { getModel } = require("../utils/mapping.js");
+const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
+const { asyncHandler } = require("../utils/asyncHandler.js");
 
 const router = express.Router({ mergeParams: true });
 
@@ -15,7 +15,7 @@ router.route("/").post(
     const post = await getModel(mainCategory).findById(post_id);
 
     if (!post) {
-      return res.status(404).send({ message: "Cannot find post." });
+      return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
     }
 
     if (!token) {
@@ -24,10 +24,10 @@ router.route("/").post(
 
     const newComment = {
       ...req.body,
-      writer: payload._id
+      writer: payload._id,
     };
 
-    post.comment.push(newComment);
+    post.commentList.push(newComment);
     await post.save();
     return res.status(201).send(newComment);
   })
@@ -44,13 +44,13 @@ router
       const post = await getModel(mainCategory).findById(post_id);
 
       if (!post) {
-        return res.status(404).send({ message: "Cannot find post." });
+        return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
 
-      const comment = post.comment.id(comment_id);
+      const comment = post.commentList.id(comment_id);
 
       if (!comment) {
-        return res.status(404).send({ message: "Cannot find comment." });
+        return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
       }
 
       if (!token || comment.writer.toString() !== payload._id) {
@@ -66,20 +66,21 @@ router
   .delete(
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id, comment_id } = req.params;
-      const { token, payload, isAdmin } = getTokenAndPayload(req);
+      const { token, payload } = getTokenAndPayload(req);
       const post = await getModel(mainCategory).findById(post_id);
-      const comment = post.comment.id(comment_id);
 
       if (!post) {
-        return res.status(404).send({ message: "Cannot find post." });
+        return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
+
+      const comment = post.commentList.id(comment_id);
 
       if (!comment) {
-        return res.status(404).send({ message: "Cannot find comment." });
+        return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
       }
 
-      if (isAdmin) {
-        post.comment.pull(comment_id);
+      if (payload.role) {
+        post.commentList.pull(comment_id);
         await post.save();
         return res.sendStatus(204);
       }
@@ -88,7 +89,7 @@ router
         return res.status(401).send({ message: "Unauthorized." });
       }
 
-      post.comment.pull(comment_id);
+      post.commentList.pull(comment_id);
       await post.save();
       return res.sendStatus(204);
     })

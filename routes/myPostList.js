@@ -1,8 +1,8 @@
 const express = require("express");
 
-const { asyncHandler } = require("../variable/asyncHandler.js");
-const { getTokenAndPayload } = require("../variable/certification.js");
-const { getMyPostList } = require("../variable/getMyPostList.js");
+const { asyncHandler } = require("../utils/asyncHandler.js");
+const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
+const { getMyPostList } = require("../utils/getMyPostList.js");
 
 const router = express.Router();
 
