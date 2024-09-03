@@ -48,7 +48,7 @@ router
       const post = await getModel(mainCategory)
         .findById(post_id)
         .populate({ path: "writer", select: "_id nickname" })
-        .populate({ path: "comment.writer", select: "_id nickname" })
+        .populate({ path: "commentList.writer", select: "_id nickname" })
         .lean();
 
       if (!post) {
