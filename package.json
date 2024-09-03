@@ -14,9 +14,9 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
-    "seed": "node data/seed.js",
-    "delete": "node data/delete.js",
-    "edit": "node data/edit.js"
+    "seed": "node dbUtils/seed.js",
+    "delete": "node dbUtils/delete.js",
+    "edit": "node dbUtils/edit.js"
   },
   "compilerOptions": {
     "module": "commonjs",
