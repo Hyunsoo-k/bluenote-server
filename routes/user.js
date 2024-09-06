@@ -17,6 +17,8 @@ router
         _id: user._id,
         email: user.email,
         nickname: user.nickname,
+        profileImageUrl: user.profileImageUrl,
+        part: user.part,
         createdAt: user.createdAt,
         role: user.role,
       });
@@ -42,6 +44,8 @@ router
         _id: user._id,
         email: user.email,
         nickname: user.nickname,
+        profileImageUrl: user.profileImageUrl,
+        part: user.part,
         createdAt: user.createdAt,
         role: user.role,
       });
