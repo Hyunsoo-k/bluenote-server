@@ -22,6 +22,28 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       minLength: 7,
     },
+    profileImageUrl: {
+      type: String,
+      default: null
+    },
+    part: {
+      type: String,
+      enum: [
+        "-",
+        "Vocalist",
+        "Pianist",
+        "Bassist",
+        "Guitarist",
+        "Drummer",
+        "Saxophonist",
+        "Trumpeter",
+        "Trombonist",
+        "Clarinetist",
+        "Owner",
+        "Listener"
+      ],
+      default: "-"
+    },
     role: {
       type: Number,
       enum: [0, 1],
