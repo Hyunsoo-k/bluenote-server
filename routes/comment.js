@@ -11,14 +11,14 @@ const router = express.Router({ mergeParams: true });
 router.route("/").post(
   asyncHandler(async (req, res) => {
     const { mainCategory, post_id } = req.params;
-    const { token, payload } = getTokenAndPayload(req);
+    const { accessToken, payload } = getTokenAndPayload(req);
     const post = await getModel(mainCategory).findById(post_id);
 
     if (!post) {
       return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
     }
 
-    if (!token) {
+    if (!accessToken) {
       return res.status(401).send({ message: "Unauthorized." });
     }
 
@@ -40,7 +40,7 @@ router
   .patch(
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id, comment_id } = req.params;
-      const { token, payload } = getTokenAndPayload(req);
+      const { accessToken, payload } = getTokenAndPayload(req);
       const post = await getModel(mainCategory).findById(post_id);
 
       if (!post) {
@@ -53,7 +53,7 @@ router
         return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
       }
 
-      if (!token || comment.writer.toString() !== payload._id) {
+      if (!accessToken || comment.writer.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
       }
 
@@ -66,7 +66,7 @@ router
   .delete(
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id, comment_id } = req.params;
-      const { token, payload } = getTokenAndPayload(req);
+      const { accessToken, payload } = getTokenAndPayload(req);
       const post = await getModel(mainCategory).findById(post_id);
 
       if (!post) {
@@ -85,7 +85,7 @@ router
         return res.sendStatus(204);
       }
 
-      if (!token || comment.writer.toString() !== payload._id) {
+      if (!accessToken || comment.writer.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
       }
 

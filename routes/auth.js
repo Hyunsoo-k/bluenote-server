@@ -31,9 +31,9 @@ router.route("/signIn").post(
       nickname: user.nickname,
       role: user.role,
     };
-    const token = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "24h" });
+    const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "24h" });
 
-    res.status(200).send({ token });
+    res.status(200).send({ accessToken });
   })
 );
 
