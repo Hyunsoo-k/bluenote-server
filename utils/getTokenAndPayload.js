@@ -6,7 +6,7 @@ dotenv.config();
 
 const getTokenAndPayload = (req) => {
   const accessToken = req.headers.authorization.split(" ")[1];
-  const payload = jwt.verify(token, process.env.SECRET_KEY);
+  const payload = jwt.verify(accessToken, process.env.SECRET_KEY);
 
   return { accessToken, payload };
 }
