@@ -61,14 +61,14 @@ router
   .patch(
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
-      const { token, payload } = getTokenAndPayload(req);
+      const { accessToken, payload } = getTokenAndPayload(req);
       const post = await getModel(mainCategory).findById(post_id).populate({ path: "writer", select: "_id nickname" });
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
 
-      if (!token || post.writer._id.toString() !== payload._id) {
+      if (!accessToken || post.writer._id.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
       }
 
@@ -82,7 +82,7 @@ router
   .delete(
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
-      const { token, payload } = getTokenAndPayload(req);
+      const { accessToken, payload } = getTokenAndPayload(req);
       const post = await getModel(mainCategory).findById(post_id);
       console.log(post);
 
@@ -98,7 +98,7 @@ router
 
       await post.populate("writer");
 
-      if (!token || post.writer._id.toString() !== payload._id) {
+      if (!accessToken || post.writer._id.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized" });
       }
 
@@ -112,9 +112,9 @@ router
 router.route("/:mainCategory/post").post(
   asyncHandler(async (req, res) => {
     const { mainCategory } = req.params;
-    const { token, payload } = getTokenAndPayload(req);
+    const { accessToken, payload } = getTokenAndPayload(req);
 
-    if (!token) {
+    if (!accessToken) {
       return res.status(401).send({ message: "Unauthorized." });
     }
 
