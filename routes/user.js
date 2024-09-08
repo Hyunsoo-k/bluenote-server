@@ -10,7 +10,13 @@ router
   .route("/")
   .get(
     asyncHandler(async (req, res) => {
-      const { payload } = getTokenAndPayload(req);
+      const { accessToken, payload } = getTokenAndPayload(req);
+
+      if (!accessToken || !payload) {
+        return res.status(401).send({ message: "Unauthorized." });
+      }
+      console.log(payload);
+
       const user = await User.findById(payload._id).lean();
 
       return res.send({
@@ -26,19 +32,24 @@ router
   )
   .patch(
     asyncHandler(async (req, res) => {
-      const { nickname } = req.body;
+      const { nickname, part, profileImageUrl } = req.body;
       const { payload } = getTokenAndPayload(req);
-      const isNicknameExist = await User.findOne({ nickname });
 
       if (!payload) {
         return res.statue(401).send({ message: "Unauthorized." });
       }
 
+      const isNicknameExist = await User.findOne({ nickname });
+
       if (isNicknameExist) {
         return res.status(409).send({ message: "이미 존재하는 닉네임 입니다." });
       }
 
-      const user = await User.findByIdAndUpdate(payload._id, { nickname }, { new: true, runValidators: true }).lean();
+      const user = await User.findByIdAndUpdate(
+        payload._id,
+        { nickname, part, profileImageUrl },
+        { new: true, runValidators: true }
+      ).lean();
 
       return res.send({
         _id: user._id,
