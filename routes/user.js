@@ -41,7 +41,7 @@ router
 
       const isNicknameExist = await User.findOne({ nickname });
 
-      if (isNicknameExist) {
+      if (isNicknameExist && isNicknameExist !== nickname) {
         return res.status(409).send({ message: "이미 존재하는 닉네임 입니다." });
       }
 
