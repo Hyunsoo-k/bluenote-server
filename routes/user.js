@@ -32,7 +32,7 @@ router
   )
   .patch(
     asyncHandler(async (req, res) => {
-      const { nickname, part, profileImageUrl } = req.body;
+      const { nickname } = req.body;
       const { payload } = getTokenAndPayload(req);
 
       if (!payload) {
@@ -40,14 +40,15 @@ router
       }
 
       const isNicknameExist = await User.findOne({ nickname });
+      console.log(isNicknameExist)
 
-      if (isNicknameExist && isNicknameExist.nickname !== nickname) {
+      if (isNicknameExist && isNicknameExist._id.toString() !== payload._id) {
         return res.status(409).send({ message: "이미 존재하는 닉네임 입니다." });
       }
 
       const user = await User.findByIdAndUpdate(
         payload._id,
-        { nickname, part, profileImageUrl },
+        { ...req.body },
         { new: true, runValidators: true }
       ).lean();
 
