@@ -15,7 +15,6 @@ router
       if (!accessToken || !payload) {
         return res.status(401).send({ message: "Unauthorized." });
       }
-      console.log(payload);
 
       const user = await User.findById(payload._id).lean();
 
@@ -23,7 +22,7 @@ router
         _id: user._id,
         email: user.email,
         nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl,
+        profileImage: { url: user.profileImage.url, fileName: user.profileImage.fileName },
         part: user.part,
         createdAt: user.createdAt,
         role: user.role,
@@ -56,7 +55,7 @@ router
         _id: user._id,
         email: user.email,
         nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl,
+        profileImage: { url: user.profileImage.url, fileName: user.profileImage.fileName },
         part: user.part,
         createdAt: user.createdAt,
         role: user.role,
