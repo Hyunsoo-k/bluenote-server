@@ -22,9 +22,9 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       minLength: 7,
     },
-    profileImageUrl: {
-      type: String,
-      default: null
+    profileImage: {
+      url: { type: String, default: null },
+      fileName: { type: String, default: null },
     },
     part: {
       type: String,
@@ -40,15 +40,15 @@ const UserSchema = new mongoose.Schema(
         "Trombonist",
         "Clarinetist",
         "Owner",
-        "Listener"
+        "Listener",
       ],
-      default: "-"
+      default: "-",
     },
     role: {
       type: Number,
       enum: [0, 1],
       default: 0,
-    }
+    },
   },
   {
     timestamps: true,
