@@ -126,6 +126,24 @@ router.route("/:mainCategory/post").post(
   })
 );
 
+// 게시글 조회수
+
+router.route("/:mainCategory/post/:post_id/views").post(
+  asyncHandler(async (req, res) => {
+    const { mainCategory, post_id } = req.params;
+    const post = await getModel(mainCategory).findById(post_id);
+
+    if (!post) {
+      return res.status.send({ message: "게시글을 찾을 수 없습니다." });
+    }
+
+    post.views += 1;
+    await post.save();
+
+    res.send(post);
+  })
+)
+
 // 댓글 라우터
 
 router.use("/:mainCategory/:post_id/comment", commentRoutes);
