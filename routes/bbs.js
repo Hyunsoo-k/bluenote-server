@@ -102,7 +102,7 @@ router
         return res.status(401).send({ message: "Unauthorized" });
       }
 
-      getModel(mainCategory).findByIdAndDelete(post_id);
+      await getModel(mainCategory).findByIdAndDelete(post_id);
       return res.sendStatus(204);
     })
   );
