@@ -72,12 +72,14 @@ router
         return res.status(401).send({ message: "Unauthorized." });
       }
 
+      console.log(req.body);
+
       if (!req.body.title) {
-        return res.status(401).send({ message: "제목을 입력해 주세요."})
+        return res.status(400).send({ message: "제목을 입력해 주세요."})
       }
   
       if (req.body.content === "<p><br></p>") {
-        return res.statue(401).send({ message: "내용을 입력해 주세요." })
+        return res.status(400).send({ message: "내용을 입력해 주세요." })
       };
 
       const editedPost = await getModel(mainCategory)
