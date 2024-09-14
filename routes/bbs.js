@@ -72,6 +72,14 @@ router
         return res.status(401).send({ message: "Unauthorized." });
       }
 
+      if (!req.body.title) {
+        return res.status(401).send({ message: "제목을 입력해 주세요."})
+      }
+  
+      if (!req.body.content) {
+        return res.statue(401).send({ message: "내용을 입력해 주세요." })
+      };
+
       const editedPost = await getModel(mainCategory)
         .findByIdAndUpdate(post_id, { $set: req.body }, { new: true })
         .lean();
@@ -116,7 +124,15 @@ router.route("/:mainCategory/post").post(
 
     if (!accessToken) {
       return res.status(401).send({ message: "Unauthorized." });
+    };
+
+    if (!req.body.title) {
+      return res.status(401).send({ message: "제목을 입력해 주세요."})
     }
+
+    if (!req.body.content) {
+      return res.statue(401).send({ message: "내용을 입력해 주세요." })
+    };
 
     const newPost = await getModel(mainCategory).create({ ...req.body, writer: payload._id });
 
