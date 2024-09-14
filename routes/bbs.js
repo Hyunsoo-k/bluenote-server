@@ -76,7 +76,7 @@ router
         return res.status(401).send({ message: "제목을 입력해 주세요."})
       }
   
-      if (!req.body.content) {
+      if (req.body.content = "<p><br></p>") {
         return res.statue(401).send({ message: "내용을 입력해 주세요." })
       };
 
@@ -130,7 +130,7 @@ router.route("/:mainCategory/post").post(
       return res.status(401).send({ message: "제목을 입력해 주세요."})
     }
 
-    if (!req.body.content) {
+    if (req.body.content = "<p><br></p>") {
       return res.statue(401).send({ message: "내용을 입력해 주세요." })
     };
 
