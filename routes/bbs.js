@@ -15,13 +15,13 @@ router.route("/:mainCategory").get(
     const { subCategory = "All", page = 1 } = req.query;
     const filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
     const totalPostCount = await getModel(mainCategory).countDocuments(filter);
-    const paginationCount = mainCategory === "news" || "promote" ? 12 : 15;
+    const postLimit = mainCategory === "news" || "promote" ? 12 : 15;
     const postList = await (mainCategory === "news" || "promote"
       ? getModel(mainCategory)
           .find(filter)
           .sort({ createdAt: -1 })
-          .skip((page - 1) * 15)
-          .limit(15)
+          .skip((page - 1) * postLimit)
+          .limit(postLimit)
           .populate({ path: "writer", select: "_id nickname" })
           .populate({
             path: "commentList.writer",
@@ -31,8 +31,8 @@ router.route("/:mainCategory").get(
       : getModel(mainCategory)
           .find(filter)
           .sort({ createdAt: -1 })
-          .skip((page - 1) * paginationCount)
-          .limit(paginationCount)
+          .skip((page - 1) * postLimit)
+          .limit(postLimit)
           .populate({ path: "writer", select: "_id nickname" })
           .populate({
             path: "commentList.writer",
@@ -45,7 +45,7 @@ router.route("/:mainCategory").get(
       postList,
       totalPostCount,
       page: parseInt(page),
-      totalPageCount: Math.ceil(totalPostCount / paginationCount),
+      totalPageCount: Math.ceil(totalPostCount / postLimit),
     });
   })
 );
