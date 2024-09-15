@@ -15,17 +15,29 @@ router.route("/:mainCategory").get(
     const { subCategory = "All", page = 1 } = req.query;
     const filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
     const totalPostCount = await getModel(mainCategory).countDocuments(filter);
-    const postList = await getModel(mainCategory)
-      .find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * 15)
-      .limit(15)
-      .populate({ path: "writer", select: "_id nickname" })
-      .populate({
-        path: "commentList.writer",
-        select: "_id nickname",
-      })
-      .lean();
+    const paginationCount = mainCategory === "news" || "promote" ? 12 : 15;
+    const postList = await (mainCategory === "news" || "promote"
+      ? getModel(mainCategory)
+          .find(filter)
+          .sort({ createdAt: -1 })
+          .skip((page - 1) * 15)
+          .limit(15)
+          .populate({ path: "writer", select: "_id nickname" })
+          .populate({
+            path: "commentList.writer",
+            select: "_id nickname",
+          })
+          .lean()
+      : getModel(mainCategory)
+          .find(filter)
+          .sort({ createdAt: -1 })
+          .skip((page - 1) * paginationCount)
+          .limit(paginationCount)
+          .populate({ path: "writer", select: "_id nickname" })
+          .populate({
+            path: "commentList.writer",
+            select: "_id nickname",
+          }));
 
     return res.send({
       mainCategory,
@@ -33,7 +45,7 @@ router.route("/:mainCategory").get(
       postList,
       totalPostCount,
       page: parseInt(page),
-      totalPageCount: Math.ceil(totalPostCount / 15),
+      totalPageCount: Math.ceil(totalPostCount / paginationCount),
     });
   })
 );
@@ -75,12 +87,12 @@ router
       console.log(req.body);
 
       if (!req.body.title) {
-        return res.status(400).send({ message: "제목을 입력해 주세요."})
+        return res.status(400).send({ message: "제목을 입력해 주세요." });
       }
-  
+
       if (req.body.content === "<p><br></p>") {
-        return res.status(400).send({ message: "내용을 입력해 주세요." })
-      };
+        return res.status(400).send({ message: "내용을 입력해 주세요." });
+      }
 
       const editedPost = await getModel(mainCategory)
         .findByIdAndUpdate(post_id, { $set: req.body }, { new: true })
@@ -126,15 +138,15 @@ router.route("/:mainCategory/post").post(
 
     if (!accessToken) {
       return res.status(401).send({ message: "Unauthorized." });
-    };
+    }
 
     if (!req.body.title) {
-      return res.status(401).send({ message: "제목을 입력해 주세요."})
+      return res.status(401).send({ message: "제목을 입력해 주세요." });
     }
 
     if (req.body.content === "<p><br></p>") {
-      return res.statue(401).send({ message: "내용을 입력해 주세요." })
-    };
+      return res.statue(401).send({ message: "내용을 입력해 주세요." });
+    }
 
     const newPost = await getModel(mainCategory).create({ ...req.body, writer: payload._id });
 
@@ -160,7 +172,7 @@ router.route("/:mainCategory/post/:post_id/views").post(
 
     res.send(post);
   })
-)
+);
 
 // 댓글 라우터
 
