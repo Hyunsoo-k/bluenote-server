@@ -15,7 +15,7 @@ router.route("/:mainCategory").get(
     const { subCategory = "All", page = 1 } = req.query;
     const filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
     const totalPostCount = await getModel(mainCategory).countDocuments(filter);
-    const postLimit = mainCategory === "news" || "promote" ? 12 : 15;
+    const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
     const postList = await (mainCategory === "news" || "promote"
       ? getModel(mainCategory)
           .find(filter)
