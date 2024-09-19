@@ -30,10 +30,11 @@ const NoticePostSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    recommend: {
-      type: Number,
-      default: 0,
-    },
+    recommend: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: []
+    }],
     content: {
       required: true,
       type: String,
@@ -75,10 +76,11 @@ const NewsPostSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    recommend: {
-      type: Number,
-      default: 0,
-    },
+    recommend: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: []
+    }],
     content: {
       required: true,
       type: String,
@@ -120,10 +122,11 @@ const BoardPostSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    recommend: {
-      type: Number,
-      default: 0,
-    },
+    recommend: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: []
+    }],
     content: {
       required: true,
       type: String,
@@ -165,10 +168,11 @@ const PromotePostSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    recommend: {
-      type: Number,
-      default: 0,
-    },
+    recommend: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: []
+    }],
     content: {
       required: true,
       type: String,
@@ -210,10 +214,11 @@ const JobPostSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    recommend: {
-      type: Number,
-      default: 0,
-    },
+    recommend: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: []
+    }],
     content: {
       required: true,
       type: String,
