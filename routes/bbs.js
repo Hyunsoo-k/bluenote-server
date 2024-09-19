@@ -176,7 +176,7 @@ router.route("/:mainCategory/post/:post_id/views").post(
 
 // 게시글 추천
 
-router.route("/mainCategory/post/:post_id/recommend").post(
+router.route("/:mainCategory/post/:post_id/recommend").post(
   asyncHandler(async (req, res) => {
     const { mainCategory, post_id } = req.params;
     const { accessToken, payload } = getTokenAndPayload(req);
