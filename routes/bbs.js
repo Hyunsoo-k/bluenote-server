@@ -174,6 +174,37 @@ router.route("/:mainCategory/post/:post_id/views").post(
   })
 );
 
+// 게시글 추천
+
+router.route("/mainCategory/post/:post_id/recommend").post(
+  asyncHandler(async (req, res) => {
+    const { mainCategory, post_id } = req.params;
+    const { accessToken, payload } = getTokenAndPayload(req);
+
+    if (!accessToken) {
+      return res.status(401).send({ message: "Unauthorized." });
+    }
+
+    const post = await getModel(mainCategory).findById(post_id);
+
+    if (!post) {
+      return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
+    }
+
+    if (post.recommend.includes(payload._id)) {
+      await getModel(mainCategory).findByIdAndUpdate(post_id, {
+        $pull: { recommend: payload._id }
+      });
+      return res.send({ message: "추천이 취소되었습니다." });
+    } else {
+      await getModel(mainCategory).findByIdAndUpdate(post_id, {
+        $push: { recommend: payload._id }
+      });
+      return res.send({ message: "추천이 성공적으로 완료되었습니다." });
+    }
+  })
+);
+
 // 댓글 라우터
 
 router.use("/:mainCategory/:post_id/comment", commentRoutes);
