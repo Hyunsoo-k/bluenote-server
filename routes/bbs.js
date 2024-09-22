@@ -193,15 +193,32 @@ router.route("/:mainCategory/post/:post_id/recommend").post(
 
     if (post.recommend.includes(payload._id)) {
       await getModel(mainCategory).findByIdAndUpdate(post_id, {
-        $pull: { recommend: payload._id }
+        $pull: { recommend: payload._id },
       });
       return res.send({ message: "추천이 취소되었습니다." });
     } else {
       await getModel(mainCategory).findByIdAndUpdate(post_id, {
-        $push: { recommend: payload._id }
+        $push: { recommend: payload._id },
       });
       return res.send({ message: "추천이 성공적으로 완료되었습니다." });
     }
+  })
+);
+
+// 인기 게시글 GET
+
+router.route("/:mainCategory/popular").get(
+  asyncHandler(async (req, res) => {
+    const { mainCategory } = req.params;
+    const dateRange = new Date();
+    dateRange.setDate(dateRange.getDate() - 60);
+
+    const postList = await getModel(mainCategory)
+      .find({ createdAt: { $gte: dateRange } })
+      .sort({ views : -1 })
+      .limit(10);
+
+      res.send(postList);
   })
 );
 
