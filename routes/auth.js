@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
 const { asyncHandler } = require("../utils/asyncHandler.js");
-const { User } = require("../model/user.js");
+const { modelMap } = require("../utils/mapping.js");
 
 const router = express.Router();
 dotenv.config();
@@ -14,7 +14,7 @@ dotenv.config();
 router.route("/signIn").post(
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await modelMap["user"].findOne({ email });
 
     if (!user) {
       return res.status(404).send({ message: "등록되지 않은 이메일 입니다." });
@@ -43,8 +43,8 @@ router.route("/signIn").post(
 router.route("/signUp").post(
   asyncHandler(async (req, res) => {
     const { email, nickname, password } = req.body;
-    const isEmailExist = await User.findOne({ email });
-    const isNicknameExist = await User.findOne({ nickname });
+    const isEmailExist = await modelMap["user"].findOne({ email });
+    const isNicknameExist = await modelMap["user"].findOne({ nickname });
 
     if (isEmailExist) {
       return res.status(409).send({ message: "이미 존재하는 이메일 입니다." });

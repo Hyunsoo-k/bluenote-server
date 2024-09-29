@@ -27,7 +27,7 @@ const NoticePostSchema = new mongoose.Schema(
       trim: true,
     },
     views: {
-      type: Number,
+      type: Number, 
       default: 0,
     },
     recommend: [{

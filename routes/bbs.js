@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { getModel, subCategoryMap } = require("../utils/mapping.js");
+const { modelMap, subCategoryMap } = require("../utils/mapping.js");
 const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
 const { asyncHandler } = require("../utils/asyncHandler.js");
 const commentRoutes = require("./comment.js");
@@ -14,30 +14,16 @@ router.route("/:mainCategory").get(
     const { mainCategory } = req.params;
     const { subCategory = "All", page = 1 } = req.query;
     const filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
-    const totalPostCount = await getModel(mainCategory).countDocuments(filter);
     const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
-    const postList = await (mainCategory === "news" || "promote"
-      ? getModel(mainCategory)
-          .find(filter)
-          .sort({ createdAt: -1 })
-          .skip((page - 1) * postLimit)
-          .limit(postLimit)
-          .populate({ path: "writer", select: "_id nickname" })
-          .populate({
-            path: "commentList.writer",
-            select: "_id nickname",
-          })
-          .lean()
-      : getModel(mainCategory)
-          .find(filter)
-          .sort({ createdAt: -1 })
-          .skip((page - 1) * postLimit)
-          .limit(postLimit)
-          .populate({ path: "writer", select: "_id nickname" })
-          .populate({
-            path: "commentList.writer",
-            select: "_id nickname",
-          }));
+    const postList = await modelMap[mainCategory]
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * postLimit)
+      .limit(postLimit)
+      .populate({ path: "writer", select: "_id nickname" })
+      .populate({ path: "commentList.writer", select: "_id nickname" })
+      .lean();
+    const totalPostCount = await modelMap[mainCategory].countDocuments(filter);
 
     return res.send({
       mainCategory,
@@ -50,6 +36,67 @@ router.route("/:mainCategory").get(
   })
 );
 
+// 게시글 검색 목록 GET
+
+router.route("/:mainCategory/search").get(
+  asyncHandler(async (req, res) => {
+    const { mainCategory } = req.params;
+    const { subCategory = "All", page = 1, select, query } = req.query;
+    const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
+    let filter;
+    
+    const fieldOptions = {
+      titleAndContent: {
+        $or: [
+          { title: { $regex: query, $options: "i" } },
+          { content: { $regex: query, $options: "i" } }
+        ]
+      },
+      title: { title: { $regex: query, $options: "i" } },
+      content: { content: { $regex: query, $options: "i" } }
+    };
+    
+    if (select !== "writer") {
+      filter = fieldOptions[select] || {};
+    }
+
+    if (select === "writer") {
+      const users = await modelMap["user"]
+        .find({ nickname: { $regex: query, $options: "i" } })
+        .select("_id");
+      const user_idList = users.map(user => user._id);
+      filter = { writer: { $in: user_idList } };
+    }
+
+    subCategory !== "All" && (filter = { ...filter, subCategory });
+
+    const [postList, totalPostCount] = await Promise.all([
+      modelMap[mainCategory]
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * postLimit)
+        .limit(postLimit)
+        .populate({ path: "writer", select: "_id nickname" })
+        .populate({
+          path: "commentList.writer",
+          select: "_id nickname",
+        })
+        .lean(),
+      
+      modelMap[mainCategory].countDocuments(filter)
+    ]);
+
+      return res.send({
+        mainCategory,
+        subCategory,
+        postList,
+        totalPostCount,
+        page: parseInt(page),
+        totalPageCount: Math.ceil(totalPostCount / postLimit),
+      });
+  })
+);
+
 // 게시글 GET, PATCH, DELETE
 
 router
@@ -57,7 +104,7 @@ router
   .get(
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
-      const post = await getModel(mainCategory)
+      const post = await modelMap[mainCategory]
         .findById(post_id)
         .populate({ path: "writer", select: "_id nickname" })
         .populate({ path: "commentList.writer", select: "_id nickname" })
@@ -74,7 +121,7 @@ router
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
       const { accessToken, payload } = getTokenAndPayload(req);
-      const post = await getModel(mainCategory).findById(post_id).populate({ path: "writer", select: "_id nickname" });
+      const post = await modelMap[mainCategory].findById(post_id).populate({ path: "writer", select: "_id nickname" });
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
@@ -84,8 +131,6 @@ router
         return res.status(401).send({ message: "Unauthorized." });
       }
 
-      console.log(req.body);
-
       if (!req.body.title) {
         return res.status(400).send({ message: "제목을 입력해 주세요." });
       }
@@ -94,7 +139,7 @@ router
         return res.status(400).send({ message: "내용을 입력해 주세요." });
       }
 
-      const editedPost = await getModel(mainCategory)
+      const editedPost = await modelMap[mainCategory]
         .findByIdAndUpdate(post_id, { $set: req.body }, { new: true })
         .lean();
 
@@ -105,15 +150,14 @@ router
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
       const { accessToken, payload } = getTokenAndPayload(req);
-      const post = await getModel(mainCategory).findById(post_id);
-      console.log(post);
+      const post = await modelMap[mainCategory].findById(post_id);
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
 
       if (payload.role) {
-        await getModel(mainCategory).findByIdAndDelete(post_id);
+        await modelMap[mainCategory].findByIdAndDelete(post_id);
 
         return res.sendStatus(204);
       }
@@ -124,7 +168,7 @@ router
         return res.status(401).send({ message: "Unauthorized" });
       }
 
-      await getModel(mainCategory).findByIdAndDelete(post_id);
+      await modelMap[mainCategory].findByIdAndDelete(post_id);
       return res.sendStatus(204);
     })
   );
@@ -148,7 +192,7 @@ router.route("/:mainCategory/post").post(
       return res.statue(401).send({ message: "내용을 입력해 주세요." });
     }
 
-    const newPost = await getModel(mainCategory).create({ ...req.body, writer: payload._id });
+    const newPost = await modelMap[mainCategory].create({ ...req.body, writer: payload._id });
 
     await newPost.populate("writer");
 
@@ -161,7 +205,7 @@ router.route("/:mainCategory/post").post(
 router.route("/:mainCategory/post/:post_id/views").post(
   asyncHandler(async (req, res) => {
     const { mainCategory, post_id } = req.params;
-    const post = await getModel(mainCategory).findById(post_id);
+    const post = await modelMap[mainCategory].findById(post_id);
 
     if (!post) {
       return res.status.send({ message: "게시글을 찾을 수 없습니다." });
@@ -185,19 +229,19 @@ router.route("/:mainCategory/post/:post_id/recommend").post(
       return res.status(401).send({ message: "Unauthorized." });
     }
 
-    const post = await getModel(mainCategory).findById(post_id);
+    const post = await modelMap[mainCategory].findById(post_id);
 
     if (!post) {
       return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
     }
 
     if (post.recommend.includes(payload._id)) {
-      await getModel(mainCategory).findByIdAndUpdate(post_id, {
+      await modelMap[mainCategory].findByIdAndUpdate(post_id, {
         $pull: { recommend: payload._id },
       });
       return res.send({ message: "추천이 취소되었습니다." });
     } else {
-      await getModel(mainCategory).findByIdAndUpdate(post_id, {
+      await modelMap[mainCategory].findByIdAndUpdate(post_id, {
         $push: { recommend: payload._id },
       });
       return res.send({ message: "추천이 성공적으로 완료되었습니다." });
@@ -213,12 +257,12 @@ router.route("/:mainCategory/popular").get(
     const dateRange = new Date();
     dateRange.setDate(dateRange.getDate() - 60);
 
-    const postList = await getModel(mainCategory)
+    const postList = await modelMap[mainCategory]
       .find({ createdAt: { $gte: dateRange } })
-      .sort({ views : -1 })
+      .sort({ views: -1 })
       .limit(10);
 
-      res.send(postList);
+    res.send(postList);
   })
 );
 

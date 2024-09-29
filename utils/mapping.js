@@ -1,15 +1,14 @@
+const { User } = require("../model/user.js");
 const { NoticePost, NewsPost, BoardPost, PromotePost, JobPost } = require("../model/bbs.js");
 
-const getModel = (main_category) => {
-  const modelMap = {
-    notice: NoticePost,
-    news: NewsPost,
-    board: BoardPost,
-    promote: PromotePost,
-    job: JobPost,
-  };
-  return modelMap[main_category];
-};
+const modelMap = {
+  user: User,
+  notice: NoticePost,
+  news: NewsPost,
+  board: BoardPost,
+  promote: PromotePost,
+  job: JobPost
+}
 
 const subCategoryMap = {
   All: "All",
@@ -26,5 +25,9 @@ const subCategoryMap = {
   jobSeeking: "구직",
 };
 
+const selectMap = {
+  titleAndContent: "제목 + 내용"
+}
 
-module.exports = { getModel, subCategoryMap };
+
+module.exports = { modelMap, subCategoryMap };
