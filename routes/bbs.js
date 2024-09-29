@@ -15,42 +15,39 @@ router.route("/:mainCategory").get(
     const { subCategory = "All", page = 1, select, query } = req.query;
     let filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
 
-    if (select) {
-      if (select !== "writer") {
-        const fieldOptions = {
-          titleAndContent: {
-            $or: [
-              { title: { $regex: query, $options: "i" } },
-              { content: { $regex: query, $options: "i" } }
-            ]
-          },
-          title: { title: { $regex: query, $options: "i" } },
-          content: { content: { $regex: query, $options: "i" } }
-        };
-
-        filter = { ...filter, ...fieldOptions[select] }
-      }
-
-      if (select === "writer") {
-        const users = await modelMap["user"]
+    if (select && select !== "writer") {
+      const fieldOptions = {
+        titleAndContent: {
+          $or: [
+            { title: { $regex: query, $options: "i" } },
+            { content: { $regex: query, $options: "i" } }
+          ],
+        },
+        title: { title: { $regex: query, $options: "i" } },
+        content: { content: { $regex: query, $options: "i" } },
+      };
+      filter = { ...filter, ...fieldOptions[select] };
+    } else if (select && select === "writer") {
+      const userList = await modelMap["user"]
         .find({ nickname: { $regex: query, $options: "i" } })
         .select("_id");
-      const user_idList = users.map(user => user._id);
-
+      console.log(userList);
+      const user_idList = userList.map((user) => user._id);
       filter = { ...filter, writer: { $in: user_idList } };
-      }
     }
 
     const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
-    const postList = await modelMap[mainCategory]
-      .find(filter)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * postLimit)
-      .limit(postLimit)
-      .populate({ path: "writer", select: "_id nickname" })
-      .populate({ path: "commentList.writer", select: "_id nickname" })
-      .lean();
-    const totalPostCount = await modelMap[mainCategory].countDocuments(filter);
+    const [postList, totalPostCount] = await Promise.all([
+      modelMap[mainCategory]
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * postLimit)
+        .limit(postLimit)
+        .populate({ path: "writer", select: "_id nickname" })
+        .populate({ path: "commentList.writer", select: "_id nickname" })
+        .lean(),
+      modelMap[mainCategory].countDocuments(filter),
+    ]);
 
     return res.send({
       mainCategory,
@@ -58,7 +55,7 @@ router.route("/:mainCategory").get(
       postList,
       totalPostCount,
       page: parseInt(page),
-      totalPageCount: Math.ceil(totalPostCount / postLimit),
+      totalPageCount: Math.ceil(totalPostCount / postLimit)
     });
   })
 );
