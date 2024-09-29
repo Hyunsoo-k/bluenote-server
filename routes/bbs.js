@@ -12,8 +12,35 @@ const router = express.Router();
 router.route("/:mainCategory").get(
   asyncHandler(async (req, res) => {
     const { mainCategory } = req.params;
-    const { subCategory = "All", page = 1 } = req.query;
-    const filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
+    const { subCategory = "All", page = 1, select, query } = req.query;
+    let filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
+
+    if (select) {
+      if (select !== "writer") {
+        const fieldOptions = {
+          titleAndContent: {
+            $or: [
+              { title: { $regex: query, $options: "i" } },
+              { content: { $regex: query, $options: "i" } }
+            ]
+          },
+          title: { title: { $regex: query, $options: "i" } },
+          content: { content: { $regex: query, $options: "i" } }
+        };
+
+        filter = { ...filter, ...fieldOptions[select] }
+      }
+
+      if (select === "writer") {
+        const users = await modelMap["user"]
+        .find({ nickname: { $regex: query, $options: "i" } })
+        .select("_id");
+      const user_idList = users.map(user => user._id);
+
+      filter = { ...filter, writer: { $in: user_idList } };
+      }
+    }
+
     const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
     const postList = await modelMap[mainCategory]
       .find(filter)
@@ -33,67 +60,6 @@ router.route("/:mainCategory").get(
       page: parseInt(page),
       totalPageCount: Math.ceil(totalPostCount / postLimit),
     });
-  })
-);
-
-// 게시글 검색 목록 GET
-
-router.route("/:mainCategory/search").get(
-  asyncHandler(async (req, res) => {
-    const { mainCategory } = req.params;
-    const { subCategory = "All", page = 1, select, query } = req.query;
-    const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
-    let filter;
-    
-    const fieldOptions = {
-      titleAndContent: {
-        $or: [
-          { title: { $regex: query, $options: "i" } },
-          { content: { $regex: query, $options: "i" } }
-        ]
-      },
-      title: { title: { $regex: query, $options: "i" } },
-      content: { content: { $regex: query, $options: "i" } }
-    };
-    
-    if (select !== "writer") {
-      filter = fieldOptions[select] || {};
-    }
-
-    if (select === "writer") {
-      const users = await modelMap["user"]
-        .find({ nickname: { $regex: query, $options: "i" } })
-        .select("_id");
-      const user_idList = users.map(user => user._id);
-      filter = { writer: { $in: user_idList } };
-    }
-
-    subCategory !== "All" && (filter = { ...filter, subCategory });
-
-    const [postList, totalPostCount] = await Promise.all([
-      modelMap[mainCategory]
-        .find(filter)
-        .sort({ createdAt: -1 })
-        .skip((page - 1) * postLimit)
-        .limit(postLimit)
-        .populate({ path: "writer", select: "_id nickname" })
-        .populate({
-          path: "commentList.writer",
-          select: "_id nickname",
-        })
-        .lean(),
-      
-      modelMap[mainCategory].countDocuments(filter)
-    ]);
-
-      return res.send({
-        mainCategory,
-        subCategory,
-        postList,
-        totalPostCount,
-        page: parseInt(page),
-        totalPageCount: Math.ceil(totalPostCount / postLimit),
-      });
   })
 );
 
