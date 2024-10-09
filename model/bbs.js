@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const { CommentSchema } = require("./comment.js");
+const CommentSchema = require("./comment");
 
 const NoticePostSchema = new mongoose.Schema(
   {

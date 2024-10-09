@@ -31,7 +31,6 @@ router.route("/:mainCategory").get(
       const userList = await modelMap["user"]
         .find({ nickname: { $regex: query, $options: "i" } })
         .select("_id");
-      console.log(userList);
       const user_idList = userList.map((user) => user._id);
       filter = { ...filter, writer: { $in: user_idList } };
     }
@@ -41,7 +40,7 @@ router.route("/:mainCategory").get(
       modelMap[mainCategory]
         .find(filter)
         .sort({ createdAt: -1 })
-        .skip((page - 1) * postLimit)
+        .skip((parseInt(page) - 1) * postLimit)
         .limit(postLimit)
         .populate({ path: "writer", select: "_id nickname" })
         .populate({ path: "commentList.writer", select: "_id nickname" })

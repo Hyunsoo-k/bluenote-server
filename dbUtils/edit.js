@@ -6,15 +6,15 @@ const { NoticePost, NewsPost, BoardPost, PromotePost, JobPost } = require("../mo
 dotenv.config();
 mongoose.connect(process.env.DATABASE_URL).then(() => console.log("Connected to DB to edit"));
 
-async function renameCommentField() {
+async function updateCommentList() {
   try {
-    await NoticePost.updateMany({}, { recommend: [] });
-    await NewsPost.updateMany({}, { recommend: [] });
-    await BoardPost.updateMany({}, { recommend: [] });
-    await PromotePost.updateMany({}, { recommend: [] });
-    await JobPost.updateMany({}, { recommend: [] });
+    await NoticePost.updateMany({}, { $set: { commentList: [] } });
+    await NewsPost.updateMany({}, { $set: { commentList: [] } });
+    await BoardPost.updateMany({}, { $set: { commentList: [] } });
+    await PromotePost.updateMany({}, { $set: { commentList: [] } });
+    await JobPost.updateMany({}, { $set: { commentList: [] } });
 
-    console.log("Successfully add part, profileImageUrl Fields.");
+    console.log("Successfully updated commentList field.");
   } catch (error) {
     console.error(error);
   } finally {
@@ -22,4 +22,4 @@ async function renameCommentField() {
   }
 }
 
-renameCommentField();
+updateCommentList();
