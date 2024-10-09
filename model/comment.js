@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const CommentSchema = new mongoose.Schema(
+const ReplySchema = new mongoose.Schema(
   {
     writer: {
       type: mongoose.Schema.Types.ObjectId,
@@ -20,4 +20,28 @@ const CommentSchema = new mongoose.Schema(
   }
 );
 
-exports.CommentSchema = CommentSchema;
+const CommentSchema = new mongoose.Schema(
+  {
+    writer: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+    content: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 1,
+      maxLength: 1000,
+    },
+    reply: {
+      type: [ReplySchema],
+      default: [],
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+module.exports = CommentSchema;
