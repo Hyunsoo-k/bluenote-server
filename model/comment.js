@@ -38,6 +38,10 @@ const CommentSchema = new mongoose.Schema(
       type: [ReplySchema],
       default: [],
     },
+    deletedHavingReply: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,
