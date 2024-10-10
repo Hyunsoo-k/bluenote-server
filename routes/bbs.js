@@ -230,6 +230,6 @@ router.route("/:mainCategory/popular").get(
 
 // 댓글 라우터
 
-router.use("/:mainCategory/:post_id/comment", commentRoutes);
+router.use("/:mainCategory/post/:post_id/comment", commentRoutes);
 
 module.exports = router;
