@@ -76,9 +76,33 @@ router.route("/notification").get(
       return res.status(401).send({ message: "Unauthorized." });
     }
 
-    const notification = await Notification.findBy(payload._id);
+    const notification = await Notification.findOne({ user: payload._id }).lean();
 
-    console.log(notification.list);
+    res.send(notification);
+  })
+);
+
+// 유저 알림 DELETE
+
+router.route("/notification/:target_id").delete(
+  asyncHandler(async (req, res) => {
+    const { target_id } = req.params;
+    const {accessToken, payload } = getTokenAndPayload(req);
+
+    if (!accessToken || !payload) {
+      return res.status(401).send({ message: "Unauthorized." });
+    };
+
+    const notification = await Notification.findOne({ user: payload._id });
+
+    if (!notification) {
+      return res.status(404).send({ message: "cant find notification." });
+    };
+
+    notification.list.pull(target_id);
+    await notification.save();
+
+    return res.status(204);
   })
 );
 
