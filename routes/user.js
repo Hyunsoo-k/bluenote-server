@@ -1,10 +1,13 @@
 const express = require("express");
 
 const { User } = require("../model/user.js");
+const { Notification } = require("../model/notification.js");
 const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
 const { asyncHandler } = require("../utils/asyncHandler.js");
 
 const router = express.Router();
+
+// 유저 정보 GET
 
 router
   .route("/")
@@ -39,7 +42,7 @@ router
       }
 
       const isNicknameExist = await User.findOne({ nickname });
-      console.log(isNicknameExist)
+      console.log(isNicknameExist);
 
       if (isNicknameExist && isNicknameExist._id.toString() !== payload._id) {
         return res.status(409).send({ message: "이미 존재하는 닉네임 입니다." });
@@ -62,5 +65,21 @@ router
       });
     })
   );
+
+// 유저 알림 GET
+
+router.route("/notification").get(
+  asyncHandler(async (req, res) => {
+    const { accessToken, payload } = getTokenAndPayload(req);
+
+    if (!accessToken || !payload) {
+      return res.status(401).send({ message: "Unauthorized." });
+    }
+
+    const notification = await Notification.findBy(payload._id);
+
+    console.log(notification.list);
+  })
+);
 
 module.exports = router;
