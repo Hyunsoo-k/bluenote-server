@@ -81,7 +81,15 @@ router.route("/notification").get(
       .populate({ path: "list.triggeredBy", select: "nickname profileImage" })
       .lean();
 
-    res.send(notification);
+    let newNotificationCount = 0;
+    
+    notification.list.forEach((item) => {
+      !item.isChecked && newNotificationCount ++;
+    });
+
+    const response = { ... notification, newNotificationCount };
+
+    res.send(response);
   })
 );
 
