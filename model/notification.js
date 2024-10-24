@@ -27,6 +27,11 @@ const NotificationSchema = new mongoose.Schema(
           type: String,
           required: true
         },
+        isChecked: {
+          type: Boolean,
+          default: false,
+          required: true
+        },
         createdAt: {
           type: Date,
           default: Date.now
