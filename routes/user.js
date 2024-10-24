@@ -76,7 +76,10 @@ router.route("/notification").get(
       return res.status(401).send({ message: "Unauthorized." });
     }
 
-    const notification = await Notification.findOne({ user: payload._id }).lean();
+    const notification = await Notification
+      .findOne({ user: payload._id })
+      .populate({ path: "list.triggeredBy", select: "nickname profileImage" })
+      .lean();
 
     res.send(notification);
   })

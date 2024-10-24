@@ -75,7 +75,7 @@ router
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      }
+      };
 
       return res.send({ ...post });
     })
