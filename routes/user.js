@@ -93,10 +93,11 @@ router.route("/notification").get(
   })
 );
 
-// 유저 알림 DELETE
+// 유저 알림 PATCH, DELETE
 
-router.route("/notification/:target_id").delete(
-  asyncHandler(async (req, res) => {
+router
+  .route("/notification/:target_id")
+  .patch(asyncHandler(async (req, res) => {
     const { target_id } = req.params;
     const {accessToken, payload } = getTokenAndPayload(req);
 
@@ -110,11 +111,35 @@ router.route("/notification/:target_id").delete(
       return res.status(404).send({ message: "cant find notification." });
     };
 
-    notification.list.pull(target_id);
-    await notification.save();
+    const response = await notification.list
+      .findByIdAndUpdate(target_id, { $set: { "list.$.isChecked": true } });
 
-    return res.status(204);
-  })
-);
+    if (!response) {
+      return res.status(404).send({ message: "cant find notification." });
+    };
+
+    res.send(response);
+  }))
+  .delete(
+    asyncHandler(async (req, res) => {
+      const { target_id } = req.params;
+      const {accessToken, payload } = getTokenAndPayload(req);
+  
+      if (!accessToken || !payload) {
+        return res.status(401).send({ message: "Unauthorized." });
+      };
+  
+      const notification = await Notification.findOne({ user: payload._id });
+  
+      if (!notification) {
+        return res.status(404).send({ message: "cant find notification." });
+      };
+  
+      notification.list.pull(target_id);
+      await notification.save();
+  
+      return res.status(204);
+    })
+  );
 
 module.exports = router;
