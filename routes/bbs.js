@@ -43,7 +43,7 @@ router.route("/:mainCategory").get(
         .skip((parseInt(page) - 1) * postLimit)
         .limit(postLimit)
         .populate({ path: "writer", select: "_id nickname" })
-        .populate({ path: "commentList.writer", select: "_id nickname profileImage" })
+        .populate({ path: "commentList.writer", select: "_id nickname" })
         .lean(),
       modelMap[mainCategory].countDocuments(filter),
     ]);
@@ -70,7 +70,7 @@ router
         .findById(post_id)
         .populate({ path: "writer", select: "_id nickname" })
         .populate({ path: "commentList.writer", select: "_id nickname" })
-        .populate({ path: "commentList.reply.writer", select: "_id nickname" })
+        .populate({ path: "commentList.reply.writer", select: "_id nickname profileImage" })
         .lean();
 
       if (!post) {
