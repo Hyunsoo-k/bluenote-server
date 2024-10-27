@@ -43,7 +43,7 @@ router.route("/:mainCategory").get(
         .skip((parseInt(page) - 1) * postLimit)
         .limit(postLimit)
         .populate({ path: "writer", select: "_id nickname" })
-        .populate({ path: "commentList.writer", select: "_id nickname" })
+        .populate({ path: "commentList.writer", select: "_id nickname profileImage" })
         .lean(),
       modelMap[mainCategory].countDocuments(filter),
     ]);
