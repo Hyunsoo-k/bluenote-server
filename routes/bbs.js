@@ -69,7 +69,7 @@ router
       const post = await modelMap[mainCategory]
         .findById(post_id)
         .populate({ path: "writer", select: "_id nickname" })
-        .populate({ path: "commentList.writer", select: "_id nickname" })
+        .populate({ path: "commentList.writer", select: "_id nickname profileImage" })
         .populate({ path: "commentList.reply.writer", select: "_id nickname profileImage" })
         .lean();
 
