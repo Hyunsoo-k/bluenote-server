@@ -95,6 +95,12 @@ router
       };
 
       if (payload.role) {
+        if (comment.reply.length > 0) {
+          comment.deletedHavingReply = true;
+          await post.save();
+          return res.sendStatus(204);
+        };
+
         post.commentList.pull(comment_id);
         await post.save();
         return res.sendStatus(204);
