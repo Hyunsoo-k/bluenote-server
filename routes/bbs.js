@@ -1,6 +1,7 @@
 const express = require("express");
 
 const { modelMap, subCategoryMap } = require("../utils/mapping.js");
+const { Notification } = require("../model/notification.js");
 const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
 const { asyncHandler } = require("../utils/asyncHandler.js");
 const commentRoutes = require("./comment.js");
@@ -18,19 +19,14 @@ router.route("/:mainCategory").get(
     if (select && select !== "writer") {
       const fieldOptions = {
         titleAndContent: {
-          $or: [
-            { title: { $regex: query, $options: "i" } },
-            { content: { $regex: query, $options: "i" } }
-          ],
+          $or: [{ title: { $regex: query, $options: "i" } }, { content: { $regex: query, $options: "i" } }],
         },
         title: { title: { $regex: query, $options: "i" } },
         content: { content: { $regex: query, $options: "i" } },
       };
       filter = { ...filter, ...fieldOptions[select] };
     } else if (select && select === "writer") {
-      const userList = await modelMap["user"]
-        .find({ nickname: { $regex: query, $options: "i" } })
-        .select("_id");
+      const userList = await modelMap["user"].find({ nickname: { $regex: query, $options: "i" } }).select("_id");
       const user_idList = userList.map((user) => user._id);
       filter = { ...filter, writer: { $in: user_idList } };
     }
@@ -54,7 +50,7 @@ router.route("/:mainCategory").get(
       postList,
       totalPostCount,
       page: parseInt(page),
-      totalPageCount: Math.ceil(totalPostCount / postLimit)
+      totalPageCount: Math.ceil(totalPostCount / postLimit),
     });
   })
 );
@@ -75,7 +71,7 @@ router
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      };
+      }
 
       return res.send({ ...post });
     })
@@ -88,19 +84,19 @@ router
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      };
+      }
 
       if (!accessToken || post.writer._id.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
-      };
+      }
 
       if (!req.body.title) {
         return res.status(400).send({ message: "제목을 입력해 주세요." });
-      };
+      }
 
       if (req.body.content === "<p><br></p>") {
         return res.status(400).send({ message: "내용을 입력해 주세요." });
-      };
+      }
 
       const editedPost = await modelMap[mainCategory]
         .findByIdAndUpdate(post_id, { $set: req.body }, { new: true })
@@ -202,12 +198,33 @@ router.route("/:mainCategory/post/:post_id/recommend").post(
       await modelMap[mainCategory].findByIdAndUpdate(post_id, {
         $pull: { recommend: payload._id },
       });
-      return res.send({ message: "추천이 취소되었습니다." });
+
+      await Notification.findOneAndUpdate(
+        { user: post.writer._id },
+        { $pull: { list: { triggeredBy: payload._id, type: "추천" } } }
+      );
+
+      return res.send({ message: "게시글 추천을 취소했습니다." });
     } else {
       await modelMap[mainCategory].findByIdAndUpdate(post_id, {
         $push: { recommend: payload._id },
       });
-      return res.send({ message: "추천이 성공적으로 완료되었습니다." });
+
+      await Notification.findOneAndUpdate(
+        { user: post.writer._id },
+        {
+          $push: {
+            list: { 
+              triggeredBy: payload._id,
+              type: "추천",
+              targetTitle: post.title,
+              targetUrl: req.body.targetUrl
+            },
+          },
+        }
+      );
+
+      return res.send({ message: "게시글을 추천했습니다." });
     }
   })
 );

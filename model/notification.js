@@ -9,6 +9,9 @@ const NotificationSchema = new mongoose.Schema(
     },
     list: [
       {
+        target_id: {
+          type: mongoose.Schema.Types.ObjectId
+        },
         triggeredBy: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
