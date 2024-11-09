@@ -13,36 +13,43 @@ router.route("/").post(
   asyncHandler(async (req, res) => {
     const { mainCategory, post_id } = req.params;
     const { accessToken, payload } = getTokenAndPayload(req);
+
+    console.log(req);
+
+    if (!accessToken || !payload) {
+      return res.status(401).send({ message: "Unauthorized." });
+    }
+
     const post = await modelMap[mainCategory].findById(post_id);
 
     if (!post) {
       return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
     }
 
-    if (!accessToken) {
-      return res.status(401).send({ message: "Unauthorized." });
-    }
-
-    const newComment = {
+    const newComment = post.commentList.create({
       content: req.body.content,
       writer: payload._id,
-    };
+    });
 
     post.commentList.push(newComment);
     await post.save();
 
     if (post.writer !== payload.writer) {
-      const notification = await Notification.findOne({ user: post.writer });
-
-      notification.list.push({
-        triggeredBy: payload._id,
-        type: "댓글",
-        targetTitle: post.title,
-        targetUrl: req.body.targetUrl,
-      });
-
-      await notification.save();
-    };
+      await Notification.findOneAndUpdate(
+        { user: post.writer },
+        {
+          $push: {
+            list: {
+              triggeredBy: payload._id,
+              type: "댓글",
+              target_id: newComment._id,
+              targetTitle: post.title,
+              targetUrl: req.body.targetUrl,
+            },
+          },
+        }
+      );
+    }
 
     return res.status(201).send(newComment);
   })
@@ -56,6 +63,11 @@ router
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id, comment_id } = req.params;
       const { accessToken, payload } = getTokenAndPayload(req);
+
+      if (!accessToken || !payload) {
+        return res.status(401).send({ message: "Unauthorized." });
+      }
+
       const post = await modelMap[mainCategory].findById(post_id);
 
       if (!post) {
@@ -82,52 +94,71 @@ router
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id, comment_id } = req.params;
       const { accessToken, payload } = getTokenAndPayload(req);
+
+      if (!accessToken || !payload) {
+        return res.status(401).send({ message: "Unauthorized." });
+      }
+
       const post = await modelMap[mainCategory].findById(post_id);
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      };
+      }
 
       const comment = post.commentList.id(comment_id);
 
       if (!comment) {
         return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
-      };
+      }
 
       if (payload.role) {
         if (comment.reply.length > 0) {
           comment.deletedHavingReply = true;
           await post.save();
+
           return res.sendStatus(204);
-        };
+        }
 
         post.commentList.pull(comment_id);
         await post.save();
-        return res.sendStatus(204);
-      };
 
-      if (!accessToken || comment.writer.toString() !== payload._id) {
+        return res.sendStatus(204);
+      }
+
+      if (comment.writer.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
-      };
+      }
 
       if (comment.reply.length > 0) {
         comment.deletedHavingReply = true;
         await post.save();
+
         return res.sendStatus(204);
-      };
+      }
 
       post.commentList.pull(comment_id);
       await post.save();
+
+      await Notification.findOneAndUpdate(
+        { user: comment.writer },
+        { $pull: { list: { target_id: comment._id } } }
+      );
+
       return res.sendStatus(204);
     })
   );
 
-// 대댓글 POST
+// 답글 POST
 
 router.route("/:comment_id/reply").post(
   asyncHandler(async (req, res) => {
     const { mainCategory, post_id, comment_id } = req.params;
     const { accessToken, payload } = getTokenAndPayload(req);
+
+    if (!accessToken || !payload) {
+      return res.status(401).send({ message: "Unauthorized." });
+    }
+
     const post = await modelMap[mainCategory].findById(post_id);
 
     if (!post) {
@@ -140,22 +171,36 @@ router.route("/:comment_id/reply").post(
       return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
     }
 
-    if (!accessToken) {
-      return res.status(401).send({ message: "Unauthorized." });
-    }
-
-    const newComment = {
+    const newReply = {
       ...req.body,
       writer: payload._id,
     };
 
-    comment.reply.push(newComment);
+    comment.reply.push(newReply);
     await post.save();
-    return res.status(201).send(newComment);
+
+    if (post.writer !== payload.writer) {
+      await Notification.findOneAndUpdate(
+        { user: post.writer },
+        {
+          $push: {
+            list: {
+              target_id: comment_id,
+              triggeredBy: payload._id,
+              type: "답글",
+              targetTitle: post.title,
+              tagetUrl: req.body.targetUrl
+            }
+          }
+        }
+      );
+    }
+
+    return res.status(201).send(newReply);
   })
 );
 
-// 대댓글 PATCH, DELETE
+// 답글 PATCH, DELETE
 
 router
   .route("/:comment_id/reply/:reply_id")
@@ -163,6 +208,11 @@ router
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id, comment_id, reply_id } = req.params;
       const { accessToken, payload } = getTokenAndPayload(req);
+
+      if (!accessToken || !payload) {
+        return res.status(401).send({ message: "Unauthorized." });
+      }
+
       const post = await modelMap[mainCategory].findById(post_id);
 
       if (!post) {
@@ -194,6 +244,11 @@ router
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id, comment_id, reply_id } = req.params;
       const { accessToken, payload } = getTokenAndPayload(req);
+
+      if (!accessToken || !payload) {
+        return res.status(401).send({ message: "Unauthorized." });
+      };
+
       const post = await modelMap[mainCategory].findById(post_id);
 
       if (!post) {
@@ -223,6 +278,24 @@ router
       };
 
       await post.save();
+
+      if (post.writer !== payload.writer) {
+        await Notification.findOneAndUpdate(
+          { user: post.writer },
+          {
+            $push: {
+              list: {
+                target_id: comment_id,
+                triggeredBy: payload._id,
+                type: "답글",
+                targetTitle: post.title,
+                tagetUrl: req.body.targetUrl
+              }
+            }
+          }
+        );
+      }
+      
       return res.sendStatus(204);
     })
   );

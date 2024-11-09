@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 
 const { asyncHandler } = require("../utils/asyncHandler.js");
 const { modelMap } = require("../utils/mapping.js");
+const { Notification } = require("../model/notification.js");
 
 const router = express.Router();
 dotenv.config();
@@ -18,13 +19,13 @@ router.route("/signIn").post(
 
     if (!user) {
       return res.status(404).send({ message: "등록되지 않은 이메일 입니다." });
-    }
+    };
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (!isPasswordCorrect) {
       return res.status(401).send({ message: "비밀번호가 일치하지 않습니다." });
-    }
+    };
 
     const payload = {
       _id: user._id.toString(),
@@ -44,18 +45,21 @@ router.route("/signUp").post(
   asyncHandler(async (req, res) => {
     const { email, nickname, password } = req.body;
     const isEmailExist = await modelMap["user"].findOne({ email });
-    const isNicknameExist = await modelMap["user"].findOne({ nickname });
 
     if (isEmailExist) {
       return res.status(409).send({ message: "이미 존재하는 이메일 입니다." });
-    }
+    };
+
+    const isNicknameExist = await modelMap["user"].findOne({ nickname });
 
     if (isNicknameExist) {
       return res.status(409).send({ message: "이미 존재하는 닉네임 입니다." });
-    }
+    };
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({ email, nickname, password: hashedPassword });
+
+    await Notification.create({ user: newUser._id });
 
     res.status(201).send({ newUser });
   })
