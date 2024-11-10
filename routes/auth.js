@@ -57,7 +57,7 @@ router.route("/signUp").post(
     };
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ email, nickname, password: hashedPassword });
+    const newUser = await modelMap["user"].create({ email, nickname, password: hashedPassword });
 
     await Notification.create({ user: newUser._id });
 
