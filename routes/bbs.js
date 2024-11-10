@@ -84,19 +84,19 @@ router
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      }
+      };
 
       if (!accessToken || post.writer._id.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
-      }
+      };
 
       if (!req.body.title) {
         return res.status(400).send({ message: "제목을 입력해 주세요." });
-      }
+      };
 
       if (req.body.content === "<p><br></p>") {
         return res.status(400).send({ message: "내용을 입력해 주세요." });
-      }
+      };
 
       const editedPost = await modelMap[mainCategory]
         .findByIdAndUpdate(post_id, { $set: req.body }, { new: true })
@@ -113,19 +113,19 @@ router
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      }
+      };
 
       if (payload.role) {
         await modelMap[mainCategory].findByIdAndDelete(post_id);
 
         return res.sendStatus(204);
-      }
+      };
 
       await post.populate("writer");
 
       if (!accessToken || post.writer._id.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized" });
-      }
+      };
 
       await modelMap[mainCategory].findByIdAndDelete(post_id);
       return res.sendStatus(204);
@@ -141,15 +141,15 @@ router.route("/:mainCategory/post").post(
 
     if (!accessToken) {
       return res.status(401).send({ message: "Unauthorized." });
-    }
+    };
 
     if (!req.body.title) {
       return res.status(401).send({ message: "제목을 입력해 주세요." });
-    }
+    };
 
     if (req.body.content === "<p><br></p>") {
       return res.statue(401).send({ message: "내용을 입력해 주세요." });
-    }
+    };
 
     const newPost = await modelMap[mainCategory].create({ ...req.body, writer: payload._id });
 
@@ -168,7 +168,7 @@ router.route("/:mainCategory/post/:post_id/views").post(
 
     if (!post) {
       return res.status.send({ message: "게시글을 찾을 수 없습니다." });
-    }
+    };
 
     post.views += 1;
     await post.save();
@@ -186,13 +186,13 @@ router.route("/:mainCategory/post/:post_id/recommend").post(
 
     if (!accessToken) {
       return res.status(401).send({ message: "Unauthorized." });
-    }
+    };
 
     const post = await modelMap[mainCategory].findById(post_id);
 
     if (!post) {
       return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-    }
+    };
 
     if (post.recommend.includes(payload._id)) {
       await modelMap[mainCategory].findByIdAndUpdate(post_id, {

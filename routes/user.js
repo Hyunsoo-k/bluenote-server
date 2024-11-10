@@ -67,7 +67,8 @@ router.route("/notification").get(
       return res.status(401).send({ message: "Unauthorized." });
     };
 
-    const notification = await Notification.findOne({ user: payload._id })
+    const notification = await Notification
+      .findOne({ user: payload._id })
       .populate({ path: "list.triggeredBy", select: "nickname profileImage" })
       .lean();
 
@@ -83,55 +84,23 @@ router.route("/notification").get(
   })
 );
 
-// 유저 알림 PATCH, DELETE
+// 유저 알림 DELETE
 
 router
-  .route("/notification/:target_id")
-  .patch(
-    asyncHandler(async (req, res) => {
-      const { target_id } = req.params;
-      const { accessToken, payload } = getTokenAndPayload(req);
-
-      if (!accessToken || !payload) {
-        return res.status(401).send({ message: "Unauthorized." });
-      }
-
-      const notification = await Notification.findOne({ user: payload._id });
-
-      if (!notification) {
-        return res.status(404).send({ message: "cant find notification." });
-      };
-
-      const response = await notification.list.findByIdAndUpdate(
-        target_id,
-        { $set: { "list.$.isChecked": true }},
-        { new: true, runValidators: true }
-      );
-
-      if (!response) {
-        return res.status(404).send({ message: "cant find notification." });
-      };
-
-      res.send(response);
-    })
-  )
+  .route("/notification/:notification_id")
   .delete(
     asyncHandler(async (req, res) => {
-      const { target_id } = req.params;
+      const { notification_id } = req.params;
       const { accessToken, payload } = getTokenAndPayload(req);
 
       if (!accessToken || !payload) {
         return res.status(401).send({ message: "Unauthorized." });
-      }
-
-      const notification = await Notification.findOne({ user: payload._id });
-
-      if (!notification) {
-        return res.status(404).send({ message: "cant find notification." });
       };
 
-      notification.list.pull(target_id);
-      await notification.save();
+      await Notification.findOneAndUpdate(
+        { user: payload._id },
+        { $pull: { list : { _id: notification_id } } }
+      );
 
       return res.status(204);
     })
