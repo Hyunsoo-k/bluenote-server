@@ -102,7 +102,7 @@ router
         { $pull: { list : { _id: notification_id } } }
       );
 
-      return res.status(204);
+      return res.status(204).end();
     })
   );
 
