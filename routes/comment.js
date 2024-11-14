@@ -122,7 +122,7 @@ router
 
       post.commentList.pull(comment_id);
       await post.save();
-      res.sendStatus(204);
+      res.sendStatus(204).end();
     })
   );
 
@@ -165,13 +165,11 @@ router.route("/:comment_id/reply").post(
       };
     });
 
-    if (newReply.writer === post.writer) {
-      recipients = recipients.filter(user => user !== post.writer);
-    };
+    const recipientExceptWriter = recipients.filter(recipient => recipient !== newReply.writer);
 
-    recipients.forEach((recipient) => {
-      if (recipient !== newReply.writer) {
-        Notification.findOneAndUpdate(
+    await Promise.all(
+      recipientExceptWriter.map(async recipient => {
+        await Notification.findOneAndUpdate(
           { user: recipient },
           {
             $push: {
@@ -180,13 +178,14 @@ router.route("/:comment_id/reply").post(
                 triggeredBy: newReply.writer,
                 type: "답글",
                 targetTitle: post.title,
-                tagetUrl: req.body.targetUrl
-              }
-            }
-          }
-        )
-      };
-    });
+                targetUrl: req.body.targetUrl,
+              },
+            },
+          },
+          { upsert: true }
+        );
+      })
+    );
 
     res.status(201).send(newReply);
   })
@@ -270,7 +269,7 @@ router
       };
 
       await post.save();
-      res.sendStatus(204);
+      res.sendStatus(204).end();
     })
   );
 
