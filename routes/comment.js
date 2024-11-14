@@ -14,8 +14,6 @@ router.route("/").post(
     const { mainCategory, post_id } = req.params;
     const { accessToken, payload } = getTokenAndPayload(req);
 
-    console.log(req);
-
     if (!accessToken || !payload) {
       return res.status(401).send({ message: "Unauthorized." });
     };
