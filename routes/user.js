@@ -84,10 +84,25 @@ router.route("/notification").get(
   })
 );
 
-// 유저 알림 DELETE
+// 유저 알림 POST(check), DELETE
 
 router
   .route("/notification/:notification_id")
+  .post(
+    asyncHandler(async (req, res) => {
+      const { notification_id } = req.params;
+      const { accessToken, payload } = getTokenAndPayload(req);
+
+      if (!accessToken || !payload) {
+        return res.status(401).send({ message: "Unauthorized." });
+      };
+
+      await Notification.findOneAndUpdate(
+        { user: payload._id, "list._id": notification_id },
+        { $set: { "list.$.isChecked": true } },
+      )
+    })
+  )
   .delete(
     asyncHandler(async (req, res) => {
       const { notification_id } = req.params;
