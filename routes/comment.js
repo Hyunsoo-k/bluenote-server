@@ -16,13 +16,13 @@ router.route("/").post(
 
     if (!accessToken || !payload) {
       return res.status(401).send({ message: "Unauthorized." });
-    };
+    }
 
     const post = await modelMap[mainCategory].findById(post_id);
 
     if (!post) {
       return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-    };
+    }
 
     const newComment = post.commentList.create({
       content: req.body.content,
@@ -42,7 +42,7 @@ router.route("/").post(
               triggeredBy: newComment.writer,
               type: "댓글",
               targetTitle: post.title,
-              targetUrl: req.body.postUrl + `#${newComment._id}`,  
+              targetUrl: req.body.postUrl + `#${newComment._id}`,
             },
           },
         }
@@ -95,30 +95,30 @@ router
 
       if (!accessToken || !payload) {
         return res.status(401).send({ message: "Unauthorized." });
-      };
+      }
 
       const post = await modelMap[mainCategory].findById(post_id);
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      };
+      }
 
       const comment = post.commentList.id(comment_id);
 
       if (!comment) {
         return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
-      };
+      }
 
       if (comment.writer.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
-      };
+      }
 
       if (comment.reply.length > 0) {
         comment.deletedHavingReply = true;
         await post.save();
 
         return res.sendStatus(204);
-      };
+      }
 
       post.commentList.pull(comment_id);
       await post.save();
@@ -135,19 +135,19 @@ router.route("/:comment_id/reply").post(
 
     if (!accessToken || !payload) {
       return res.status(401).send({ message: "Unauthorized." });
-    };
+    }
 
     const post = await modelMap[mainCategory].findById(post_id);
 
     if (!post) {
       return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-    };
+    }
 
     const comment = post.commentList.id(comment_id);
 
     if (!comment) {
       return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
-    };
+    }
 
     const newReply = {
       ...req.body,
@@ -159,16 +159,18 @@ router.route("/:comment_id/reply").post(
 
     let recipients = [post.writer];
 
-    comment.reply.forEach(reply => {
+    comment.reply.forEach((reply) => {
       if (!recipients.includes(reply.writer)) {
         recipients.push(reply.writer);
-      };
+      }
     });
 
-    const recipientExceptWriter = recipients.filter(recipient => recipient !== newReply.writer);
+    const recipientExceptWriter = recipients.filter(
+      (recipient) => recipient !== newReply.writer && recipient !== post.writer
+    );
 
     await Promise.all(
-      recipientExceptWriter.map(async recipient => {
+      recipientExceptWriter.map(async (recipient) => {
         await Notification.findOneAndUpdate(
           { user: recipient },
           {
@@ -178,7 +180,7 @@ router.route("/:comment_id/reply").post(
                 triggeredBy: newReply.writer,
                 type: "답글",
                 targetTitle: post.title,
-                targetUrl: req.body.postUrl + `#${newReply._id}`
+                targetUrl: req.body.postUrl + `#${newReply._id}`,
               },
             },
           },
@@ -202,29 +204,29 @@ router
 
       if (!accessToken || !payload) {
         return res.status(401).send({ message: "Unauthorized." });
-      };
+      }
 
       const post = await modelMap[mainCategory].findById(post_id);
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      };
+      }
 
       const comment = post.commentList.id(comment_id);
 
       if (!comment) {
         return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
-      };
+      }
 
       const replyComment = comment.reply.id(reply_id);
 
       if (!replyComment) {
         return res.status(404).send({ message: "대댓글을 찾을 수 없습니다." });
-      };
+      }
 
       if (!accessToken || replyComment.writer.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
-      };
+      }
 
       replyComment.content = req.body.content;
       await post.save();
@@ -238,35 +240,35 @@ router
 
       if (!accessToken || !payload) {
         return res.status(401).send({ message: "Unauthorized." });
-      };
+      }
 
       const post = await modelMap[mainCategory].findById(post_id);
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      };
+      }
 
       const comment = post.commentList.id(comment_id);
 
       if (!comment) {
         return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
-      };
+      }
 
       const replyComment = comment.reply.id(reply_id);
 
       if (!replyComment) {
         return res.status(404).send({ message: "대댓글을 찾을 수 없습니다." });
-      };
+      }
 
       if (!accessToken || replyComment.writer.toString() !== payload._id) {
         return res.status(401).send({ message: "Unauthorized." });
-      };
+      }
 
       await comment.reply.pull(reply_id);
 
       if (comment.reply.length === 0 && comment.deletedHavingReply) {
         comment.deleteOne();
-      };
+      }
 
       await post.save();
       res.sendStatus(204).end();
