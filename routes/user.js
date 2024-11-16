@@ -70,9 +70,10 @@ router.route("/notification").get(
     const notification = await Notification
       .findOne({ user: payload._id })
       .populate({ path: "list.triggeredBy", select: "nickname profileImage" })
-      .sort({ createdAt: -1 })
       .lean();
 
+    notification.list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
     let newNotificationCount = 0;
 
     notification.list.forEach((item) => {
