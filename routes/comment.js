@@ -32,15 +32,15 @@ router.route("/").post(
     post.commentList.push(newComment);
     await post.save();
 
-    if (post.writer !== payload.writer) {
+    if (post.writer !== newComment.writer) {
       await Notification.findOneAndUpdate(
         { user: post.writer },
         {
           $push: {
             list: {
-              triggeredBy: payload._id,
-              type: "댓글",
               target_id: newComment._id,
+              triggeredBy: newComment.writer,
+              type: "댓글",
               targetTitle: post.title,
               targetUrl: req.body.targetUrl,
             },
