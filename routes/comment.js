@@ -42,7 +42,7 @@ router.route("/").post(
               triggeredBy: newComment.writer,
               type: "댓글",
               targetTitle: post.title,
-              targetUrl: req.body.targetUrl,
+              targetUrl: req.body.postUrl + `#${newComment._id}`,  
             },
           },
         }
@@ -178,7 +178,7 @@ router.route("/:comment_id/reply").post(
                 triggeredBy: newReply.writer,
                 type: "답글",
                 targetTitle: post.title,
-                targetUrl: req.body.targetUrl,
+                targetUrl: req.body.postUrl + `#${newReply._id}`
               },
             },
           },
