@@ -34,7 +34,7 @@ router.route("/").post(
 
     if (post.writer.toString() !== newComment.writer.toString()) {
       await Notification.findOneAndUpdate(
-        { user: post.writer.toString() },
+        { user: post.writer },
         {
           $push: {
             list: {
@@ -149,10 +149,10 @@ router.route("/:comment_id/reply").post(
       return res.status(404).send({ message: "댓글을 찾을 수 없습니다." });
     };
 
-    const newReply = {
+    const newReply = comment.reply.create({
       ...req.body,
       writer: payload._id,
-    };
+    });
 
     comment.reply.push(newReply);
     await post.save();
