@@ -42,7 +42,7 @@ router.route("/").post(
               triggeredBy: newComment.writer,
               type: "댓글",
               targetTitle: post.title,
-              posrUrl: req.body.postUrl,  
+              postUrl: req.body.postUrl,  
             },
           },
         }
