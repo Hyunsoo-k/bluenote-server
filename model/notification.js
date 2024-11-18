@@ -26,7 +26,7 @@ const NotificationSchema = new mongoose.Schema(
           type: String,
           required: true
         },
-        targetUrl: {
+        postUrl: {
           type: String,
           required: true
         },
