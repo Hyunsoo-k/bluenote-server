@@ -102,7 +102,9 @@ router
       await Notification.findOneAndUpdate(
         { user: payload._id, "list._id": notification_id },
         { $set: { "list.$.isChecked": true } },
-      )
+      );
+
+      return res.send();
     })
   )
   .delete(
