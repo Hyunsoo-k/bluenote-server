@@ -157,7 +157,7 @@ router.route("/:comment_id/reply").post(
     comment.reply.push(newReply);
     await post.save();
 
-    let recipients = [post.writer.toString()];
+    let recipients = [post.writer.toString(), ...(post.writer.toString() !== comment.writer.toString() ? [comment.writer.toString()] : [])];
 
     comment.reply.forEach(reply => {
       if (!recipients.includes(reply.writer.toString())) {
