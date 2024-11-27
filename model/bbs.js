@@ -4,6 +4,10 @@ const CommentSchema = require("./comment");
 
 const NoticePostSchema = new mongoose.Schema(
   {
+    number: {
+      type: Number,
+      required: true
+    },
     writer: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -51,6 +55,10 @@ const NoticePostSchema = new mongoose.Schema(
 
 const NewsPostSchema = new mongoose.Schema(
   {
+    number: {
+      type: Number,
+      required: true
+    },
     writer: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -97,6 +105,10 @@ const NewsPostSchema = new mongoose.Schema(
 
 const BoardPostSchema = new mongoose.Schema(
   {
+    number: {
+      type: Number,
+      required: true
+    },
     writer: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -143,6 +155,10 @@ const BoardPostSchema = new mongoose.Schema(
 
 const PromotePostSchema = new mongoose.Schema(
   {
+    number: {
+      type: Number,
+      required: true
+    },
     writer: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -189,6 +205,10 @@ const PromotePostSchema = new mongoose.Schema(
 
 const JobPostSchema = new mongoose.Schema(
   {
+    number: {
+      type: Number,
+      required: true
+    },
     writer: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
