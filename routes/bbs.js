@@ -2,6 +2,7 @@ const express = require("express");
 
 const { modelMap, subCategoryMap } = require("../utils/mapping.js");
 const { Notification } = require("../model/notification.js");
+const { SiteInformation } = require("../model/siteInformation.js");
 const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
 const { asyncHandler } = require("../utils/asyncHandler.js");
 const commentRoutes = require("./comment.js");
@@ -150,8 +151,14 @@ router.route("/:mainCategory/post").post(
     if (req.body.content === "<p><br></p>") {
       return res.statue(401).send({ message: "내용을 입력해 주세요." });
     };
+    
+    const siteInformation = await SiteInformation.findOneAndUpdate(
+      {},
+      { $inc: { cumulatedPostsCount: 1 } },
+      { new: true }
+    );
 
-    const newPost = await modelMap[mainCategory].create({ ...req.body, writer: payload._id });
+    const newPost = await modelMap[mainCategory].create({ ...req.body, writer: payload._id, number: siteInformation.cumulatedPostsCount });
 
     await newPost.populate("writer");
 
