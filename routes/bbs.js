@@ -20,7 +20,10 @@ router.route("/:mainCategory").get(
     if (select && select !== "writer") {
       const fieldOptions = {
         titleAndContent: {
-          $or: [{ title: { $regex: query, $options: "i" } }, { content: { $regex: query, $options: "i" } }],
+          $or: [
+            { title: { $regex: query, $options: "i" } },
+            { content: { $regex: query, $options: "i" } }
+          ],
         },
         title: { title: { $regex: query, $options: "i" } },
         content: { content: { $regex: query, $options: "i" } },
@@ -51,7 +54,7 @@ router.route("/:mainCategory").get(
       postList,
       totalPostCount,
       page: parseInt(page),
-      totalPageCount: Math.ceil(totalPostCount / postLimit),
+      totalPage: Math.ceil(totalPostCount / postLimit),
     });
   })
 );
