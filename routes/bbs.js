@@ -15,25 +15,34 @@ router.route("/:mainCategory").get(
   asyncHandler(async (req, res) => {
     const { mainCategory } = req.params;
     const { subCategory = "All", page = 1, select, query } = req.query;
-    let filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
+    const filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
 
     if (select && select !== "writer") {
-      const fieldOptions = {
-        titleAndContent: {
-          $or: [
-            { title: { $regex: query, $options: "i" } },
-            { content: { $regex: query, $options: "i" } }
-          ],
-        },
-        title: { title: { $regex: query, $options: "i" } },
-        content: { content: { $regex: query, $options: "i" } },
+      if (query) {
+        const fieldOptions = {
+          titleAndContent: {
+            $or: [
+              { title: { $regex: query, $options: "i" } },
+              { content: { $regex: query, $options: "i" } }
+            ],
+          },
+          title: { title: { $regex: query, $options: "i" } },
+          content: { content: { $regex: query, $options: "i" } },
+        };
+    
+        filter = { ...filter, ...fieldOptions[select] };
+      } else {
+        filter = { ...filter };
       };
-      filter = { ...filter, ...fieldOptions[select] };
     } else if (select && select === "writer") {
-      const userList = await modelMap["user"].find({ nickname: { $regex: query, $options: "i" } }).select("_id");
-      const user_idList = userList.map((user) => user._id);
-      filter = { ...filter, writer: { $in: user_idList } };
-    }
+      if (query) {
+        const userList = await modelMap["user"].find({ nickname: { $regex: query, $options: "i" } }).select("_id");
+        const user_idList = userList.map((user) => user._id);
+        filter = { ...filter, writer: { $in: user_idList } };
+      } else {
+        filter = { ...filter };
+      };
+    };
 
     const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
     const [postList, totalPostCount] = await Promise.all([
@@ -63,6 +72,23 @@ router.route("/:mainCategory").get(
 
 router
   .route("/:mainCategory/post/:post_id")
+  // .get(
+  //   asyncHandler(async (req, res) => {
+  //     const { mainCategory, post_id } = req.params;
+  //     const post = await modelMap[mainCategory]
+  //       .findById(post_id)
+  //       .populate({ path: "writer", select: "_id nickname" })
+  //       .populate({ path: "commentList.writer", select: "_id nickname profileImage" })
+  //       .populate({ path: "commentList.reply.writer", select: "_id nickname profileImage" })
+  //       .lean();
+
+  //     if (!post) {
+  //       return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
+  //     }
+
+  //     return res.send({ ...post });
+  //   })
+  // )
   .get(
     asyncHandler(async (req, res) => {
       const { mainCategory, post_id } = req.params;
@@ -77,7 +103,23 @@ router
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
       }
 
-      return res.send({ ...post });
+      const previousPost = await modelMap[mainCategory]
+        .findOne({ createdAt: { $lt: post.createdAt } })
+        .sort({ createdAt: -1 })
+        .select("_id title createdAt")
+        .lean();
+
+      const nextPost = await modelMap[mainCategory]
+        .findOne({ createdAt: { $gt: post.createdAt } })
+        .sort({ createdAt: 1 })
+        .select("_id title createdAt")
+        .lean();
+
+      return res.send({
+        ...post,
+        previousPost,
+        nextPost,
+      });
     })
   )
   .patch(
