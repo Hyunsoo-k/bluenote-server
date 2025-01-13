@@ -121,7 +121,7 @@ router
         { $pull: { list : { _id: notification_id } } }
       );
 
-      return res.status(204).end();
+      return res.status(204).send();
     })
   );
 
