@@ -16,7 +16,7 @@ router.route("/").get(
       postList,
       totalPostCount,
       page: parseInt(page),
-      totalPageCount: Math.ceil(totalPostCount / 10),
+      totalPage: Math.ceil(totalPostCount / 10),
     });
   })
 );
