@@ -35,7 +35,13 @@ router.route("/signIn").post(
     
     const accessToken = jwt.sign(payload, process.env.SECRET_KEY, { expiresIn: "24h" });
 
-    res.status(200).send({ accessToken, userMe: payload });
+    res.status(200).send({
+      accessToken,
+      userMe: {
+        ...payload,
+        profileImage: user.profileImage
+      }
+    });
   })
 );
 
