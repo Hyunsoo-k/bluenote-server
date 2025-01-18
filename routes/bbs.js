@@ -15,7 +15,7 @@ router.route("/:mainCategory").get(
   asyncHandler(async (req, res) => {
     const { mainCategory } = req.params;
     const { subCategory = "All", page = 1, select, query } = req.query;
-    const filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
+    let filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
 
     if (select && select !== "writer") {
       if (query) {
@@ -38,6 +38,7 @@ router.route("/:mainCategory").get(
       if (query) {
         const userList = await modelMap["user"].find({ nickname: { $regex: query, $options: "i" } }).select("_id");
         const user_idList = userList.map((user) => user._id);
+        
         filter = { ...filter, writer: { $in: user_idList } };
       } else {
         filter = { ...filter };
