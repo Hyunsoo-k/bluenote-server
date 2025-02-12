@@ -5,6 +5,7 @@ const { Notification } = require("../model/notification.js");
 const { SiteInformation } = require("../model/siteInformation.js");
 const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
 const { asyncHandler } = require("../utils/asyncHandler.js");
+const optimizePostList = require("../utils/optimizePostList .js");
 const commentRoutes = require("./comment.js");
 
 const router = express.Router();
@@ -17,37 +18,41 @@ router.route("/:mainCategory").get(
     const { subCategory = "All", page = 1, select, query } = req.query;
     let filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
 
-    if (select && select !== "writer") {
-      if (query) {
-        const fieldOptions = {
-          titleAndContent: {
-            $or: [
-              { title: { $regex: query, $options: "i" } },
-              { content: { $regex: query, $options: "i" } }
-            ],
-          },
-          title: { title: { $regex: query, $options: "i" } },
-          content: { content: { $regex: query, $options: "i" } },
-        };
-    
-        filter = { ...filter, ...fieldOptions[select] };
-      } else {
-        filter = { ...filter };
-      };
-    } else if (select && select === "writer") {
-      if (query) {
+    if (query) {
+      if (select === "writer") {
         const userList = await modelMap["user"].find({ nickname: { $regex: query, $options: "i" } }).select("_id");
         const user_idList = userList.map((user) => user._id);
         
         filter = { ...filter, writer: { $in: user_idList } };
-      } else {
-        filter = { ...filter };
-      };
+      } else if (select === "titleAndContent") {
+        filter = {
+          ...filter,
+          titleAndContent: {
+            $or: [
+              { title: { $regex: query, $options: "i" } },
+              { content: { $regex: query, $options: "i" } }
+            ]
+          }
+        };
+      } else if (select === "title") {
+        filter = {
+          ...filter,
+          title: { $regex: query, $options: "i" }
+        };
+      } else if (select === "content") {
+        filter = {
+          ...filter,
+          content: { $regex: query, $options: "i" }
+        };
+      }
     };
 
     const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
+
+    const mainCategoryModel = modelMap[mainCategory];
+
     const [postList, totalPostCount] = await Promise.all([
-      modelMap[mainCategory]
+      mainCategoryModel
         .find(filter)
         .sort({ createdAt: -1 })
         .skip((parseInt(page) - 1) * postLimit)
@@ -55,13 +60,15 @@ router.route("/:mainCategory").get(
         .populate({ path: "writer", select: "_id nickname" })
         .populate({ path: "commentList.writer", select: "_id nickname" })
         .lean(),
-      modelMap[mainCategory].countDocuments(filter),
+        mainCategoryModel.countDocuments(filter),
     ]);
+
+    const responsePostList = await Promise.all(postList.map(optimizePostList));
 
     return res.send({
       mainCategory,
       subCategory,
-      postList,
+      postList: responsePostList,
       totalPostCount,
       page: parseInt(page),
       totalPage: Math.ceil(totalPostCount / postLimit),
@@ -85,7 +92,7 @@ router
 
       if (!post) {
         return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });
-      }
+      };
 
       const previousPost = await modelMap[mainCategory]
         .findOne({ createdAt: { $lt: post.createdAt } })
