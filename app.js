@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 
+const mainPageRouter = require("./routes/mainPage.js");
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user.js");
 const bbsRouter = require("./routes/bbs");
@@ -13,15 +14,19 @@ mongoose.connect(process.env.DATABASE_URL).then(() => console.log("Connected to 
 
 const app = express();
 app.use(cors(
-  { origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://bluenote-server.onrender.com",
-    "https://blue-note-silk.vercel.app"
-  ]}));
+  {
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://bluenote-server.onrender.com",
+      "https://blue-note-silk.vercel.app"
+    ]
+  }
+));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use("/mainPage", mainPageRouter);
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/bbs", bbsRouter);
