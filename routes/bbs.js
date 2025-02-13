@@ -5,7 +5,7 @@ const { Notification } = require("../model/notification.js");
 const { SiteInformation } = require("../model/siteInformation.js");
 const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
 const { asyncHandler } = require("../utils/asyncHandler.js");
-const optimizePostList = require("../utils/optimizePostList .js");
+const optimizePostList = require("../utils/optimizePostList.js");
 const commentRoutes = require("./comment.js");
 
 const router = express.Router();
