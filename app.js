@@ -10,7 +10,13 @@ const bbsRouter = require("./routes/bbs");
 const myPostListRouter = require("./routes/myPostList.js")
 
 dotenv.config();
-mongoose.connect(process.env.DATABASE_URL).then(() => console.log("Connected to DB"));
+mongoose
+  .connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    autoIndex: false
+  })
+  .then(() => console.log("Connected to MONGO DB"));
 
 const app = express();
 app.use(cors(
