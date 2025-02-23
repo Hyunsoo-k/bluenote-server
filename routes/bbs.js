@@ -1,6 +1,5 @@
 const express = require("express");
 
-const commentRoutes = require("./comment.js");
 const getPostList = require("../middleWare/getPostList.js");
 const getPost = require("../middleWare/getPost.js");
 const patchPost = require("../middleWare/patchPost.js");
@@ -8,6 +7,7 @@ const deletePost = require("../middleWare/deletePost.js");
 const createPost = require("../middleWare/createPost.js");
 const increaseView = require("../middleWare/increaseView.js");
 const recommendPost = require("../middleWare/recommnedPost.js");
+const commentRoutes = require("./comment.js");
 
 const router = express.Router();
 
