@@ -253,21 +253,6 @@ const JobPostSchema = new mongoose.Schema(
   }
 );
 
-NoticePostSchema.index({ createdAt: -1 });
-NoticePostSchema.index({ title: "text", content: "text" });
-
-NewsPostSchema.index({ createdAt: -1 });
-NewsPostSchema.index({ title: "text", content: "text" });
-
-BoardPostSchema.index({ createdAt: -1 });
-BoardPostSchema.index({ title: "text", content: "text" });
-
-PromotePostSchema.index({ createdAt: -1 });
-PromotePostSchema.index({ title: "text", content: "text" });
-
-JobPostSchema.index({ createdAt: -1 });
-JobPostSchema.index({ title: "text", content: "text" });
-
 const NoticePost = mongoose.model("NoticePost", NoticePostSchema);
 const NewsPost = mongoose.model("NewsPost", NewsPostSchema);
 const BoardPost = mongoose.model("BoardPost", BoardPostSchema);

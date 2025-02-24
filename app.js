@@ -11,11 +11,7 @@ const myPostListRouter = require("./routes/myPostList.js")
 
 dotenv.config();
 mongoose
-  .connect(process.env.DATABASE_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    autoIndex: false
-  })
+  .connect(process.env.DATABASE_URL, { autoIndex: false })
   .then(() => console.log("Connected to MONGO DB"));
 
 const app = express();

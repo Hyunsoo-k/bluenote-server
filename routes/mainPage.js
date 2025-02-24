@@ -16,6 +16,16 @@ router.get("/", asyncHandler(async (req, res) => {
     job: 8,
   };
 
+  const getOptimizedPostList = (mainCategory, subCategory, limit) => {
+    return modelMap[mainCategory]
+      .find(subCategory ? { subCategory: subCategoryMap[subCategory] } : {} )
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .select("createdAt writer title content commentList")
+      .lean()
+      .then(postList => Promise.all(postList.map(optimizePostList)));
+  };
+  
   const [
     optimizedNewsList,
     optimizedBandList,
@@ -24,42 +34,12 @@ router.get("/", asyncHandler(async (req, res) => {
     optimizedBoardList,
     optimizedJobList
   ] = await Promise.all([
-    modelMap["news"]
-      .find()
-      .sort({ createdAt: -1 })
-      .limit(postLimit.news)
-      .lean()
-      .then(postList => Promise.all(postList.map(optimizePostList))),
-    modelMap["promote"]
-      .find({ subCategory: subCategoryMap["bandPromotion"] })
-      .sort({ createdAt: -1 })
-      .limit(postLimit.bandPromotion)
-      .lean()
-      .then(postList => Promise.all(postList.map(optimizePostList))),
-    modelMap["promote"]
-      .find({ subCategory: subCategoryMap["albumPromotion"] })
-      .sort({ createdAt: -1 })
-      .limit(postLimit.albumPromotion)
-      .lean()
-      .then(postList => Promise.all(postList.map(optimizePostList))),
-    modelMap["promote"]
-      .find({ subCategory: subCategoryMap["jazzbarPromotion"] })
-      .sort({ createdAt: -1 })
-      .limit(postLimit.jazzbarPromotion)
-      .lean()
-      .then(postList => Promise.all(postList.map(optimizePostList))),
-    modelMap["board"]
-      .find()
-      .sort({ createdAt: -1 })
-      .limit(postLimit.board)
-      .lean()
-      .then(postList => Promise.all(postList.map(optimizePostList))),
-    modelMap["job"]
-      .find()
-      .sort({ createdAt: -1 })
-      .limit(postLimit.job)
-      .lean()
-      .then(postList => Promise.all(postList.map(optimizePostList))),
+    getOptimizedPostList("news", undefined, postLimit.news),
+    getOptimizedPostList("promote", "bandPromotion", postLimit.bandPromotion),
+    getOptimizedPostList("promote", "albumPromotion", postLimit.albumPromotion),
+    getOptimizedPostList("promote", "jazzbarPromotion", postLimit.jazzbarPromotion),
+    getOptimizedPostList("board", undefined, postLimit.board),
+    getOptimizedPostList("job", undefined, postLimit.job)
   ]);
 
   res.send({
