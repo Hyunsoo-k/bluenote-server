@@ -1,8 +1,8 @@
 const express = require("express");
 
 const dotenv = require("dotenv");
-const login = require("../middleWare/login.js");
-const signUp = require("../middleWare/signUp.js");
+const login = require("../middleWare/auth/login.js");
+const signUp = require("../middleWare/auth/signUp.js");
 
 const router = express.Router();
 

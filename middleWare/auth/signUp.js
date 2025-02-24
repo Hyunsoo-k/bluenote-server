@@ -1,11 +1,9 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const bcrypt = require("bcrypt");
 
-const { asyncHandler } = require("../utils/asyncHandler.js");
-const { modelMap } = require("../utils/mapping.js");
-const { Notification } = require("../model/notification.js");
+const { asyncHandler } = require("../../utils/asyncHandler.js");
+const { modelMap } = require("../../utils/mapping.js");
+const { Notification } = require("../../model/notification.js");
 
 dotenv.config();
 

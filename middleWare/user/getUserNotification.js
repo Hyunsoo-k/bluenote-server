@@ -1,6 +1,6 @@
+const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { Notification } = require("../../model/notification.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
-const { asyncHandler } = require("../../utils/asyncHandler.js");
 
 const getUserNotification = asyncHandler(async (req, res) => {
   const { accessToken, payload } = getTokenAndPayload(req);

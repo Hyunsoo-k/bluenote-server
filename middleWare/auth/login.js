@@ -1,9 +1,9 @@
+const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
 
-const { asyncHandler } = require("../utils/asyncHandler.js");
-const { modelMap } = require("../utils/mapping.js");
+const { asyncHandler } = require("../../utils/asyncHandler.js");
+const { modelMap } = require("../../utils/mapping.js");
 
 dotenv.config();
 
