@@ -1,8 +1,8 @@
 const express = require("express");
 
-const getUser = require("../middleWare/getUser.js");
-const patchUser = require("../middleWare/patchUser.js");
-const getUserNotification = require("../middleWare/getUserNotification.js");
+const getUser = require("../middleWare/user/getUser.js");
+const patchUser = require("../middleWare/user/patchUser.js");
+const getUserNotification = require("../middleWare/user/getUserNotification.js");
 const checkUserNotification = require("../middleWare/user/checkUserNotification.js");
 const deleteUserNotification = require("../middleWare/user/deleteUserNotification.js");
 

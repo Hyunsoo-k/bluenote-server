@@ -1,13 +1,13 @@
-const { User } = require("../model/user.js");
-const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
-const { asyncHandler } = require("../utils/asyncHandler.js");
+const { User } = require("../../model/user.js");
+const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
+const { asyncHandler } = require("../../utils/asyncHandler.js");
 
 const getUser = asyncHandler(async (req, res) => {
   const { accessToken, payload } = getTokenAndPayload(req);
 
   if (!accessToken || !payload) {
     return res.status(401).send({ message: "Unauthorized." });
-  };
+  }
 
   const user = await User.findById(payload._id).lean();
 
