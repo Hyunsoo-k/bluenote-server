@@ -1,6 +1,6 @@
-const { asyncHandler } = require("../utils/asyncHandler.js");
-const { modelMap, subCategoryMap } = require("../utils/mapping.js");
-const optimizePostList = require("../utils/optimizePostList.js");
+const { asyncHandler } = require("../../utils/asyncHandler.js");
+const { modelMap, subCategoryMap } = require("../../utils/mapping.js");
+const optimizePostList = require("../../utils/optimizePostList.js");
 
 const getPostList = asyncHandler(async (req, res) => {
   const { mainCategory } = req.params;

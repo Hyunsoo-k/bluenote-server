@@ -1,7 +1,6 @@
-const { SiteInformation } = require("../model/siteInformation.js");
-
-const { asyncHandler } = require("../utils/asyncHandler.js");
-const { modelMap } = require("../utils/mapping.js");
+const { asyncHandler } = require("../../utils/asyncHandler.js");
+const { SiteInformation } = require("../../model/siteInformation.js");
+const { modelMap } = require("../../utils/mapping.js");
 
 const createPost = asyncHandler(async (req, res) => {
   const { mainCategory } = req.params;

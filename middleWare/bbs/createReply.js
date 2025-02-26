@@ -1,7 +1,7 @@
-const { Notification } = require("../model/notification.js");
-const { modelMap } = require("../utils/mapping.js");
-const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
-const { asyncHandler } = require("../utils/asyncHandler.js");
+const { asyncHandler } = require("../../utils/asyncHandler.js");
+const { Notification } = require("../../model/notification.js");
+const { modelMap } = require("../../utils/mapping.js");
+const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
 
 const createReply = asyncHandler(async (req, res) => {
   const { mainCategory, post_id, comment_id } = req.params;

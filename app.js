@@ -35,4 +35,3 @@ app.use("/bbs", bbsRouter);
 app.use("/myPostList", myPostListRouter);
 
 app.listen(process.env.PORT || 3000 || 3001, () => console.log("Server Started"));
-

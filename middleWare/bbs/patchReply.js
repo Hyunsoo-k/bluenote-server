@@ -1,9 +1,8 @@
-const { Notification } = require("../model/notification.js");
-const { modelMap } = require("../utils/mapping.js");
-const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
-const { asyncHandler } = require("../utils/asyncHandler.js");
+const { asyncHandler } = require("../../utils/asyncHandler.js");
+const { modelMap } = require("../../utils/mapping.js");
+const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
 
-const deleteReply = asyncHandler(async (req, res) => {
+const patchReply = asyncHandler(async (req, res) => {
   const { mainCategory, post_id, comment_id, reply_id } = req.params;
   const { accessToken, payload } = getTokenAndPayload(req);
 
@@ -33,15 +32,10 @@ const deleteReply = asyncHandler(async (req, res) => {
     return res.status(401).send({ message: "Unauthorized." });
   };
 
-  await comment.reply.pull(reply_id);
-
-  if (comment.reply.length === 0 && comment.deletedHavingReply) {
-    comment.deleteOne();
-  };
-
+  replyComment.content = req.body.content;
   await post.save();
 
-  res.sendStatus(204).end();
+  res.send(replyComment);
 });
 
-module.exports = deleteReply;
+module.exports = patchReply;

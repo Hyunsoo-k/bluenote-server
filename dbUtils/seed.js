@@ -1,19 +1,26 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-const { NoticePost, NewsPost, BoardPost, PromotePost, JobPost } = require("../model/bbs.js");
+const { RecentSearch } = require("../model/userRecentSearch.js");
+const { User } = require("../model/user.js");
 
 dotenv.config();
+
 mongoose.connect(process.env.DATABASE_URL).then(() => console.log("Connected to DB to seed"));
 
-NoticePost.deleteMany();
-NewsPost.deleteMany();
-BoardPost.deleteMany();
-PromotePost.deleteMany();
-JobPost.deleteMany();
+const seedingRecentSearch = async () => {
+  try {
+    const userList = await User.find();
+    const user_idList = userList.map((doc) => doc._id);
 
-NoticePost.insertMany();
-NewsPost.insertMany();
-BoardPost.insertMany();
-PromotePost.insertMany();
-JobPost.insertMany();
+    await Promise.all(user_idList.map((_id) => RecentSearch.create({ user: _id })));
+
+    console.log("Seeding completed successfully");
+  } catch (error) {
+    console.error("Seeding failed:", error);
+  } finally {
+    mongoose.connection.close();
+  }
+};
+
+seedingRecentSearch();
