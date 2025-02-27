@@ -18,7 +18,7 @@ const deleteRecentSearch = asyncHandler(async (req, res) => {
   await RecentSearch.updateOne(
     { user: payload._id },
     { $pull: {
-        query: req.body.query.trim()
+        queryList: req.body.query.trim()
       }
     }
   );

@@ -19,7 +19,7 @@ const createRecentSearch = asyncHandler(async (req, res) => {
     { user: payload._id },
     {
       $push: {
-        query: {
+        queryList: {
           $each: [req.body.query],
           $position: 0,
           $slice: 10,
