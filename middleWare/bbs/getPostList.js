@@ -24,12 +24,10 @@ const getPostList = asyncHandler(async (req, res) => {
     } else if (select === "titleAndContent") {
       filter = {
         ...filter,
-        titleAndContent: {
-          $or: [
-            { title: { $regex: query, $options: "i" } },
-            { content: { $regex: query, $options: "i" } }
-          ]
-        }
+        $or: [
+          { title: { $regex: query, $options: "i" } },
+          { content: { $regex: query, $options: "i" } }
+        ]       
       };
     } else if (select === "title") {
       filter = {
