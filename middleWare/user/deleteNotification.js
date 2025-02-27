@@ -2,7 +2,7 @@ const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { Notification } = require("../../model/notification.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
 
-const deleteUserNotification = asyncHandler(async (req, res) => {
+const deleteNotification = asyncHandler(async (req, res) => {
   const { notification_id } = req.params;
   const { accessToken, payload } = getTokenAndPayload(req);
 
@@ -15,4 +15,4 @@ const deleteUserNotification = asyncHandler(async (req, res) => {
   return res.status(204).send();
 });
 
-module.exports = deleteUserNotification;
+module.exports = deleteNotification;

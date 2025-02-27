@@ -1,8 +1,8 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { RecentSearch } = require("../../model/userRecentSearch.js");
+const { RecentSearch } = require("../../model/recentSearch.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
 
-const patchUserRecentSearch = asyncHandler(async (req, res) => {
+const createRecentSearch = asyncHandler(async (req, res) => {
   const { accessToken, payload } = getTokenAndPayload(req);
 
   if (!accessToken || !payload) {
@@ -17,10 +17,18 @@ const patchUserRecentSearch = asyncHandler(async (req, res) => {
 
   await RecentSearch.updateOne(
     { user: payload._id },
-    { $pull: { content: req.body.content.trim() } }
+    {
+      $push: {
+        query: {
+          $each: [req.body.query],
+          $position: 0,
+          $slice: 10,
+        },
+      },
+    }
   );
 
-  res.send();
+  res.status(201).send();
 });
 
-module.exports = patchUserRecentSearch;
+module.exports = createRecentSearch;
