@@ -7,7 +7,7 @@ const recentSearchSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    content: {
+    queryList: {
       required: true,
       type: [{ type: String, trim: true }],
       default: []
