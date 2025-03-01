@@ -18,15 +18,17 @@ const createRecentSearch = asyncHandler(async (req, res) => {
   await RecentSearch.updateOne(
     { user: payload._id },
     {
+      $pull: { queryList: req.body.query }, 
       $push: {
         queryList: {
           $each: [req.body.query],
           $position: 0,
-          $slice: 10,
+          $slice: 20,
         },
       },
     }
   );
+  
 
   res.status(201).send();
 });
