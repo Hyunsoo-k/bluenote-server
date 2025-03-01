@@ -10,7 +10,13 @@ const recentSearchSchema = new mongoose.Schema(
     queryList: {
       required: true,
       type: [{ type: String, trim: true }],
-      default: []
+      default: [],
+      validate: {
+        validator: function (value) {
+          return value.length <= 20;
+        },
+        message: "queryList can contain at most 20 items.",
+      }
     }
   },
   {

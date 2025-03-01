@@ -14,21 +14,17 @@ const createRecentSearch = asyncHandler(async (req, res) => {
   if (!recentSearch) {
     return res.status(404).send({ message: "Can not find recent search." });
   };
-
+  
+  let updatedQueryList = recentSearch.queryList.filter(q => q !== req.body.query);
+  
+  updatedQueryList.unshift(req.body.query);
+  
+  updatedQueryList = updatedQueryList.slice(0, 20);
+  
   await RecentSearch.updateOne(
     { user: payload._id },
-    {
-      $pull: { queryList: req.body.query }, 
-      $push: {
-        queryList: {
-          $each: [req.body.query],
-          $position: 0,
-          $slice: 20,
-        },
-      },
-    }
+    { $set: { queryList: updatedQueryList } }
   );
-  
 
   res.status(201).send();
 });
