@@ -5,7 +5,7 @@ const optimizePostList = async (post) => {
   const firstImage = $("img").first();
   const thumbnailSrc = firstImage.length ? firstImage.attr("src") : null;
   
-  const textContent = $("body").text().trim().slice(0, 100);
+  const textContent = $("body").text().trim().slice(0, 700);
   
   const commentCount = (post.commentList || []).reduce((acc, comment) => {
     const replies = comment.reply ? comment.reply.length : 0;
