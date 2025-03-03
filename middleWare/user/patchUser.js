@@ -1,6 +1,6 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { User } = require("../../model/user.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
+const { User } = require("../../model/user.js");
 
 const patchUser = asyncHandler(async (req, res) => {
   const { nickname } = req.body;

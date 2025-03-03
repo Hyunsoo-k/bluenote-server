@@ -1,6 +1,6 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { modelMap } = require("../../utils/mapping.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
+const { modelMap } = require("../../utils/mapping.js");
 
 const patchComment = asyncHandler(async (req, res) => {
   const { mainCategory, post_id, comment_id } = req.params;

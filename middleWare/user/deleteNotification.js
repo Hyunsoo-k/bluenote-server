@@ -1,6 +1,6 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { Notification } = require("../../model/notification.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
+const { Notification } = require("../../model/notification.js");
 
 const deleteNotification = asyncHandler(async (req, res) => {
   const { notification_id } = req.params;

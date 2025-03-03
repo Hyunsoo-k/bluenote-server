@@ -1,10 +1,14 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
+const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
 const { modelMap } = require("../../utils/mapping.js");
 
 const patchPost = asyncHandler(async (req, res) => {
   const { mainCategory, post_id } = req.params;
   const { accessToken, payload } = getTokenAndPayload(req);
-  const post = await modelMap[mainCategory].findById(post_id).populate({ path: "writer", select: "_id nickname" });
+
+  const post = await modelMap[mainCategory]
+    .findById(post_id)
+    .populate({ path: "writer", select: "_id nickname" });
 
   if (!post) {
     return res.status(404).send({ message: "게시글을 찾을 수 없습니다." });

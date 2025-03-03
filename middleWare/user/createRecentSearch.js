@@ -1,6 +1,6 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { RecentSearch } = require("../../model/recentSearch.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
+const { RecentSearch } = require("../../model/recentSearch.js");
 
 const createRecentSearch = asyncHandler(async (req, res) => {
   const { accessToken, payload } = getTokenAndPayload(req);

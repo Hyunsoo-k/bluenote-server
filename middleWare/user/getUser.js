@@ -1,6 +1,6 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { User } = require("../../model/user.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
+const { User } = require("../../model/user.js");
 
 const getUser = asyncHandler(async (req, res) => {
   const { accessToken, payload } = getTokenAndPayload(req);
