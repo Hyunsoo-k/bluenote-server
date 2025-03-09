@@ -17,7 +17,8 @@ const getPhotoNews = asyncHandler(async (req, res) => {
 
     return {
       title: news.title,
-      thumbnailSrc
+      thumbnailSrc,
+      postUrl: `/bbs/news/post/${news._id}`
     };
   });
 
