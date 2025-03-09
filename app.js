@@ -7,6 +7,7 @@ const mainPageRouter = require("./routes/mainPage.js");
 const authRouter = require("./routes/auth");
 const userRouter = require("./routes/user.js");
 const bbsRouter = require("./routes/bbs");
+const PhotoNewsRouter = require("./routes/photoNews.js");
 const myPostListRouter = require("./routes/myPostList.js")
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use("/mainPage", mainPageRouter);
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
 app.use("/bbs", bbsRouter);
+app.use("/photoNews", PhotoNewsRouter);
 app.use("/myPostList", myPostListRouter);
 
 app.listen(process.env.PORT || 3000 || 3001, () => console.log("Server Started"));
