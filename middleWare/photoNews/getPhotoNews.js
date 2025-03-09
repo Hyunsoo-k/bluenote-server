@@ -20,6 +20,8 @@ const getPhotoNews = asyncHandler(async (req, res) => {
       thumbnailSrc
     };
   });
+
+  res.send(response);
 });
 
 module.exports = getPhotoNews;
