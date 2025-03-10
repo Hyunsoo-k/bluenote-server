@@ -1,19 +1,17 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-const { RecentSearch } = require("../model/userRecentSearch.js");
-const { User } = require("../model/user.js");
+const { RecommendedNews } = require("../model/recommendedNews.js");
 
 dotenv.config();
 
 mongoose.connect(process.env.DATABASE_URL).then(() => console.log("Connected to DB to seed"));
 
-const seedingRecentSearch = async () => {
+const seedingRecommendedNews = async () => {
   try {
-    const userList = await User.find();
-    const user_idList = userList.map((doc) => doc._id);
-
-    await Promise.all(user_idList.map((_id) => RecentSearch.create({ user: _id })));
+    await RecommendedNews.create({
+      recommendedNewsList: []
+    });
 
     console.log("Seeding completed successfully");
   } catch (error) {
@@ -23,4 +21,4 @@ const seedingRecentSearch = async () => {
   }
 };
 
-seedingRecentSearch();
+seedingRecommendedNews();
