@@ -10,6 +10,7 @@ const createRecommendedNews = asyncHandler(async (req, res) => {
   };
 
   const recommendedNews = await RecommendedNews.findOne({});
+  console.log(recommendedNews)
 
   if (recommendedNews.recommendedNewsList.length < 5) {
     recommendedNews.recommendedNewsList.unshift(req.body.newRecommendedNews_id);

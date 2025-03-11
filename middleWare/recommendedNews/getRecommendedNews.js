@@ -1,17 +1,25 @@
+const cheerio = require("cheerio");
+
 const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { RecommendedNews } = require("../../model/recommendedNews.js");
 
 const getRecommendedNews = asyncHandler(async (req, res) => {
-  const recommendedNewsList = await RecommendedNews
-  .find()
-  .sort({ createdAt: -1 })
+  const recommendedNews = await RecommendedNews
+  .findOne({})
+  .populate("recommendedNewsList")
   .lean();
 
-  const response = recommendedNewsList.map((recommendedNews) => ({
-    title: recommendedNews.title,
-    thumbnailSrc: recommendedNews.thumbnailSrc,
-    postUrl: `/bbs/news/post/${recommendedNews._id}`
-  }));
+  const response = recommendedNews.recommendedNewsList.map((news) => {
+      const $ = cheerio.load(news.content || "");
+      const firstImage = $("img").first();
+      const thumbnailSrc = firstImage.length ? firstImage.attr("src") : null;
+
+      return ({
+        title: news.title,
+        thumbnailSrc: thumbnailSrc,
+        postUrl: `/bbs/news/post/${news._id}`
+      })
+  });
 
   return res.send(response);
 });
