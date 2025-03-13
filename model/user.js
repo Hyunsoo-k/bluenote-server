@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema(
       minLength: 7,
     },
     profileImageUrl: {
-      type: String | null,
+      type: String,
       default: null,
     },
     part: {
