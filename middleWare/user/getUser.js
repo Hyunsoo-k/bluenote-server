@@ -15,7 +15,7 @@ const getUser = asyncHandler(async (req, res) => {
     _id: user._id,
     email: user.email,
     nickname: user.nickname,
-    profileImage,
+    profileImageUrl: user.profileImageUrl,
     part: user.part,
     createdAt: user.createdAt,
     role: user.role,
