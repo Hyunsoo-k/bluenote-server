@@ -2,7 +2,7 @@ const express = require("express");
 
 const { asyncHandler } = require("../utils/asyncHandler.js");
 const { modelMap } = require("../variable/modelMap.js");
-const { subCategoryMapEnglishToKorean } = require("../variable/subCategoryMap.js");
+const { subCategoryEnglishToKoreanMap } = require("../variable/subCategoryMap.js");
 const optimizePostList = require("../utils/optimizePostList.js");
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.get("/", asyncHandler(async (req, res) => {
   const getOptimizedPostList = (mainCategory, subCategory, limit) => {
     return modelMap[mainCategory]
       .find(subCategory
-        ? { subCategory: subCategoryMapEnglishToKorean[subCategory] }
+        ? { subCategory: subCategoryEnglishToKoreanMap[subCategory] }
         : {}
       )
       .sort({ createdAt: -1 })
