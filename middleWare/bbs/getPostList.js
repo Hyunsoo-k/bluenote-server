@@ -61,7 +61,7 @@ const getPostList = asyncHandler(async (req, res) => {
 
   return res.send({
     mainCategory,
-    subCategory,
+    subCategory: subCategoryEnglishToKoreanMap[subCategory],
     postList: responsePostList,
     totalPostCount,
     page: parseInt(page),
