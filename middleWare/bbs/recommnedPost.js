@@ -1,6 +1,6 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
-const { modelMap } = require("../../utils/mapping.js");
+const { modelMap } = require("../../variable/modelMap.js");
 
 const recommendPost = asyncHandler(async (req, res) => {
   const { mainCategory, post_id } = req.params;

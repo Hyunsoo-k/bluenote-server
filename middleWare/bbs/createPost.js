@@ -1,7 +1,7 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
 const { SiteInformation } = require("../../model/siteInformation.js");
-const { modelMap } = require("../../utils/mapping.js");
+const { modelMap } = require("../../variable/modelMap.js");
 
 const createPost = asyncHandler(async (req, res) => {
   const { mainCategory } = req.params;

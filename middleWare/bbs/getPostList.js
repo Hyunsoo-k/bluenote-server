@@ -1,5 +1,6 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { modelMap, subCategoryMap } = require("../../utils/mapping.js");
+const { modelMap } = require("../../variable/modelMap.js");
+const { subCategoryEnglishToKoreanMap } = require("../../variable/subCategoryMap.js");
 const optimizePostList = require("../../utils/optimizePostList.js");
 
 const getPostList = asyncHandler(async (req, res) => {
@@ -8,7 +9,9 @@ const getPostList = asyncHandler(async (req, res) => {
   const mainCategoryModel = modelMap[mainCategory];
   const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
 
-  let filter = subCategory === "All" ? {} : { subCategory: subCategoryMap[subCategory] };
+  let filter = subCategory === "All"
+    ? {}
+    : { subCategory: subCategoryEnglishToKoreanMap[subCategory] };
 
   if (query) {
     if (select === "writer") {

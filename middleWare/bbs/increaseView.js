@@ -1,5 +1,5 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { modelMap } = require("../../utils/mapping.js");
+const { modelMap } = require("../../variable/modelMap.js");
 
 const increaseView = asyncHandler(async (req, res) => {
   const { mainCategory, post_id } = req.params;

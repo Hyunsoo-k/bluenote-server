@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { modelMap } = require("../../utils/mapping.js");
+const { modelMap } = require("../../variable/modelMap.js");
 const { Notification } = require("../../model/notification.js");
 const createUserRecentSearch = require("../user/createRecentSearch.js");
 

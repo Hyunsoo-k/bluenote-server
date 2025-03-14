@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const { asyncHandler } = require("../../utils/asyncHandler.js");
-const { modelMap } = require("../../utils/mapping.js");
+const { modelMap } = require("../../variable/modelMap.js");
 
 dotenv.config();
 
