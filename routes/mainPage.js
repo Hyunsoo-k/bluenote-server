@@ -25,7 +25,7 @@ router.get("/", asyncHandler(async (req, res) => {
       )
       .sort({ createdAt: -1 })
       .limit(limit)
-      .select("createdAt writer subCategory title content commentList")
+      .select("createdAt writer mainCategory subCategory title content commentList")
       .lean()
       .then(postList => Promise.all(postList.map(optimizePostList)));
   };
