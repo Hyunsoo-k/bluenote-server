@@ -12,9 +12,7 @@ router.get("/", asyncHandler(async (req, res) => {
     news: 12,
     bandPromotion: 8,
     albumPromotion: 5,
-    jazzbarPromotion: 12,
-    board: 8,
-    job: 8,
+    jazzbarPromotion: 12
   };
 
   const getOptimizedPostList = (mainCategory, subCategory, limit) => {
@@ -34,25 +32,19 @@ router.get("/", asyncHandler(async (req, res) => {
     optimizedNewsList,
     optimizedBandList,
     optimizedAlbumList,
-    optimizedJazzbarList,
-    optimizedBoardList,
-    optimizedJobList
+    optimizedJazzbarList
   ] = await Promise.all([
     getOptimizedPostList("news", undefined, postLimit.news),
     getOptimizedPostList("promote", "bandPromotion", postLimit.bandPromotion),
     getOptimizedPostList("promote", "albumPromotion", postLimit.albumPromotion),
-    getOptimizedPostList("promote", "jazzbarPromotion", postLimit.jazzbarPromotion),
-    getOptimizedPostList("board", undefined, postLimit.board),
-    getOptimizedPostList("job", undefined, postLimit.job)
+    getOptimizedPostList("promote", "jazzbarPromotion", postLimit.jazzbarPromotion)
   ]);
 
   res.send({
     mainPageNewsList: optimizedNewsList,
     mainPageBandList: optimizedBandList,
     mainPageAlbumList: optimizedAlbumList,
-    mainPageJazzbarList: optimizedJazzbarList,
-    mainPageBoardList: optimizedBoardList,
-    mainPageJobList: optimizedJobList,
+    mainPageJazzbarList: optimizedJazzbarList
   });
 }));
 
