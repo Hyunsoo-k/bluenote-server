@@ -12,7 +12,7 @@ const deleteAllRecentSearch = require("../middleWare/user/deleteAllRecentSearch.
 
 const router = express.Router();
 
-// 유저 정보 GET
+// 유저 정보 GET, PATCH
 
 router.route("/")
   .get(getUser)
