@@ -1,24 +1,11 @@
 const express = require("express");
 
-const { asyncHandler } = require("../utils/asyncHandler.js");
-const { getTokenAndPayload } = require("../utils/getTokenAndPayload.js");
-const { getMyPostList } = require("../utils/getMyPostList.js");
+const { getMyPostList } = require("../middleWare/myPostList/getMyPostList.js");
 
 const router = express.Router();
 
-router.route("/").get(
-  asyncHandler(async (req, res) => {
-    const { page = 1 } = req.query;
-    const { payload } = getTokenAndPayload(req);
-    const { postList, totalPostCount } = await getMyPostList(payload._id, Number(page));
+// 내가 쓴 게시글 목록 GET
 
-    res.send({
-      postList,
-      totalPostCount,
-      page: parseInt(page),
-      totalPage: Math.ceil(totalPostCount / 10),
-    });
-  })
-);
+router.get("/", getMyPostList);
 
 module.exports = router;
