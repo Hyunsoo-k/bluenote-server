@@ -1,6 +1,6 @@
 const cheerio = require("cheerio");
 
-const optimizePostList = async (post) => {
+const optimizeBbsList = async (post) => {
   const $ = cheerio.load(post.content || "");
   const firstImage = $("img").first();
   const thumbnailSrc = firstImage.length ? firstImage.attr("src") : null;
@@ -16,4 +16,4 @@ const optimizePostList = async (post) => {
   return { ...rest, content: textContent, commentCount, thumbnailSrc };
 };
 
-module.exports = optimizePostList;
+module.exports = optimizeBbsList;
