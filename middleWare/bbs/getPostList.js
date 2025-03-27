@@ -1,7 +1,7 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { modelMap } = require("../../variable/modelMap.js");
 const { subCategoryEnglishToKoreanMap } = require("../../variable/subCategoryMap.js");
-const optimizePostList = require("../../utils/optimizePostList.js");
+const optimizeBbsList = require("../../utils/optimizeBbsList.js");
 
 const getPostList = asyncHandler(async (req, res) => {
   const { mainCategory } = req.params;
@@ -9,41 +9,34 @@ const getPostList = asyncHandler(async (req, res) => {
   const mainCategoryModel = modelMap[mainCategory];
   const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
 
-  let filter = subCategory === "All"
-    ? {}
-    : { subCategory: subCategoryEnglishToKoreanMap[subCategory] };
+  let filter = subCategory === "All" ? {} : { subCategory: subCategoryEnglishToKoreanMap[subCategory] };
 
   if (query) {
     if (select === "writer") {
-      const userList = await modelMap["user"]
-        .find({ nickname: { $regex: query, $options: "i" } })
-        .select("_id");
+      const userList = await modelMap["user"].find({ nickname: { $regex: query, $options: "i" } }).select("_id");
       const user_idList = userList.map((user) => user._id);
-      
+
       filter = {
         ...filter,
-        writer: { $in: user_idList }
+        writer: { $in: user_idList },
       };
     } else if (select === "titleAndContent") {
       filter = {
         ...filter,
-        $or: [
-          { title: { $regex: query, $options: "i" } },
-          { content: { $regex: query, $options: "i" } }
-        ]       
+        $or: [{ title: { $regex: query, $options: "i" } }, { content: { $regex: query, $options: "i" } }],
       };
     } else if (select === "title") {
       filter = {
         ...filter,
-        title: { $regex: query, $options: "i" }
+        title: { $regex: query, $options: "i" },
       };
     } else if (select === "content") {
       filter = {
         ...filter,
-        content: { $regex: query, $options: "i" }
+        content: { $regex: query, $options: "i" },
       };
     }
-  };
+  }
 
   const [postList, totalPostCount] = await Promise.all([
     mainCategoryModel
@@ -54,10 +47,10 @@ const getPostList = asyncHandler(async (req, res) => {
       .populate({ path: "writer", select: "_id nickname" })
       .populate({ path: "commentList.writer", select: "_id nickname" })
       .lean(),
-      mainCategoryModel.countDocuments(filter),
+    mainCategoryModel.countDocuments(filter),
   ]);
 
-  const responsePostList = await Promise.all(postList.map(optimizePostList));
+  const responsePostList = await Promise.all(postList.map(optimizeBbsList));
 
   return res.send({
     mainCategory,
