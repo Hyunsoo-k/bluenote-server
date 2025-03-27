@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
 const { User } = require("../../model/user.js");
@@ -7,7 +9,7 @@ const patchUser = asyncHandler(async (req, res) => {
   const { payload } = getTokenAndPayload(req);
 
   if (!payload) {
-    return res.statue(401).send({ message: "Unauthorized." });
+    return res.status(401).send({ message: "Unauthorized." });
   };
 
   const isNicknameExist = await User.findOne({ nickname });
@@ -18,7 +20,7 @@ const patchUser = asyncHandler(async (req, res) => {
 
   let newHashedPassword = null;
 
-  if (req.newPassword !== "") {
+  if (newPassword) {
     newHashedPassword = await bcrypt.hash(newPassword, 10);
   };
 
