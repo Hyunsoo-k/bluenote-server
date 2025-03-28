@@ -7,13 +7,20 @@ const getPostList = asyncHandler(async (req, res) => {
   const { mainCategory } = req.params;
   const { subCategory = "All", page = 1, select, query } = req.query;
   const mainCategoryModel = modelMap[mainCategory];
-  const postLimit = mainCategory === "news" || mainCategory === "promote" ? 12 : 15;
+  const postLimit = mainCategory === "news" || mainCategory === "promote"
+    ? 12
+    : 15;
 
-  let filter = subCategory === "All" ? {} : { subCategory: subCategoryEnglishToKoreanMap[subCategory] };
+  let filter = subCategory === "All"
+    ? {}
+    : { subCategory: subCategoryEnglishToKoreanMap[subCategory] };
 
   if (query) {
     if (select === "writer") {
-      const userList = await modelMap["user"].find({ nickname: { $regex: query, $options: "i" } }).select("_id");
+      const userList = await modelMap["user"]
+      .find({ nickname: { $regex: query, $options: "i" } })
+      .select("_id");
+
       const user_idList = userList.map((user) => user._id);
 
       filter = {
@@ -23,7 +30,10 @@ const getPostList = asyncHandler(async (req, res) => {
     } else if (select === "titleAndContent") {
       filter = {
         ...filter,
-        $or: [{ title: { $regex: query, $options: "i" } }, { content: { $regex: query, $options: "i" } }],
+        $or: [
+          { title: { $regex: query, $options: "i" } },
+          { content: { $regex: query, $options: "i" } }
+        ],
       };
     } else if (select === "title") {
       filter = {
@@ -35,8 +45,8 @@ const getPostList = asyncHandler(async (req, res) => {
         ...filter,
         content: { $regex: query, $options: "i" },
       };
-    }
-  }
+    };
+  };
 
   const [postList, totalPostCount] = await Promise.all([
     mainCategoryModel
