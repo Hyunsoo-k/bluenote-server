@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { modelMap } = require("../../variable/modelMap.js");
 const { subCategoryEnglishToKoreanMap } = require("../../variable/subCategoryMap.js");
@@ -5,9 +7,14 @@ const optimizeBbsList = require("../../utils/optimizeBbsList.js");
 
 const getPostList = asyncHandler(async (req, res) => {
   const { mainCategory } = req.params;
-  const { subCategory = "All", page = 1, select, query } = req.query;
+  const {
+    subCategory = "All",
+    cursor = null,
+    select,
+    query } = req.query;
+
   const mainCategoryModel = modelMap[mainCategory];
-  const postLimit = mainCategory === "news" || mainCategory === "promote"
+  const limit = mainCategory === "news" || mainCategory === "promote"
     ? 12
     : 15;
 
@@ -48,27 +55,28 @@ const getPostList = asyncHandler(async (req, res) => {
     };
   };
 
-  const [postList, totalPostCount] = await Promise.all([
-    mainCategoryModel
-      .find(filter)
-      .sort({ createdAt: -1 })
-      .skip((parseInt(page) - 1) * postLimit)
-      .limit(postLimit)
-      .populate({ path: "writer", select: "_id nickname" })
-      .populate({ path: "commentList.writer", select: "_id nickname" })
-      .lean(),
-    mainCategoryModel.countDocuments(filter),
-  ]);
+  if (cursor) {
+    filter._id = { $lt: new mongoose.Types.ObjectId(String(cursor)) };
+  };
 
+  const postList = await mainCategoryModel
+    .find(filter)
+    .sort({ _id: -1 })
+    .limit(limit + 1)  // 문서를 하나 더 요청하여 아래에 hasNextPage에서 다음 문서가 있는지 확인
+    .populate({ path: "writer", select: "_id nickname" })
+    .lean();
+
+  const hasNextPage = postList.length > limit;
+
+  if (hasNextPage) {
+    postList.pop();
+  };
+  
   const responsePostList = await Promise.all(postList.map(optimizeBbsList));
 
   return res.send({
-    mainCategory,
-    subCategory: subCategoryEnglishToKoreanMap[subCategory],
     postList: responsePostList,
-    totalPostCount,
-    page: parseInt(page),
-    totalPage: Math.ceil(totalPostCount / postLimit),
+    hasNextPage
   });
 });
 
