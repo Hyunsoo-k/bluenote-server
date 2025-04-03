@@ -28,94 +28,96 @@ const getMyPostList = asyncHandler(async (req, res) => {
                 input: "$postList",
                 as: "post",
                 cond: {
-                  $lt: ["$$post.post_id", new mongoose.Types.ObjectId(String(cursor))]
-                }
-              }
+                  $lt: [
+                    "$$post.post_id",
+                    new mongoose.Types.ObjectId(String(cursor)),
+                  ],
+                },
+              },
             }
-          : "$postList"
-      }
+          : "$postList",
+      },
     },
     {
       $project: {
         postList: {
-          $sortArray: { input: "$postList", sortBy: { post_id: -1 } }
-        }
-      }
+          $sortArray: { input: "$postList", sortBy: { post_id: -1 } },
+        },
+      },
     },
     {
       $project: {
         postList: {
-          $slice: ["$postList", limit + 1]
-        }
-      }
+          $slice: ["$postList", limit + 1],
+        },
+      },
     },
-    { 
+    {
       $lookup: {
         from: "noticeposts",
         localField: "postList.post_id",
         foreignField: "_id",
-        as: "noticePosts"
-      }
+        as: "noticePosts",
+      },
     },
-    { 
+    {
       $lookup: {
         from: "newsposts",
         localField: "postList.post_id",
         foreignField: "_id",
-        as: "newsPosts"
-      }
+        as: "newsPosts",
+      },
     },
-    { 
+    {
       $lookup: {
         from: "boardposts",
         localField: "postList.post_id",
         foreignField: "_id",
-        as: "boardPosts"
-      }
+        as: "boardPosts",
+      },
     },
-    { 
+    {
       $lookup: {
         from: "promoteposts",
         localField: "postList.post_id",
         foreignField: "_id",
-        as: "promotePosts"
-      }
+        as: "promotePosts",
+      },
     },
-    { 
+    {
       $lookup: {
         from: "jobposts",
         localField: "postList.post_id",
         foreignField: "_id",
-        as: "jobPosts"
-      }
+        as: "jobPosts",
+      },
     },
-    { 
+    {
       $project: {
-        postList: { 
+        postList: {
           $concatArrays: [
             "$noticePosts",
             "$newsPosts",
             "$boardPosts",
             "$promotePosts",
-            "$jobPosts"
-          ] 
-        } 
-      } 
+            "$jobPosts",
+          ],
+        },
+      },
     },
     {
       $project: {
         postList: {
           $sortArray: {
             input: "$postList",
-            sortBy: { _id: -1 }
-          }
-        }
-      }
-    }
+            sortBy: { _id: -1 },
+          },
+        },
+      },
+    },
   ];
 
   const [myPostListData] = await MyPost.aggregate(pipeline);
-
   const postList = myPostListData?.postList || [];
   const hasNextPage = postList.length > limit;
 
@@ -127,7 +129,7 @@ const getMyPostList = asyncHandler(async (req, res) => {
 
   return res.send({
     postList: responsePostList,
-    hasNextPage
+    hasNextPage,
   });
 });
 
