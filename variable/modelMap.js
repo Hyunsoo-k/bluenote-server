@@ -10,4 +10,12 @@ const modelMap = {
   job: JobPost
 };
 
-module.exports = { modelMap };
+const modelTextMap = {
+  "notice": "NoticePost",
+  "news": "NewsPost",
+  "board": "BoardPost",
+  "promote": "PromotePost",
+  "job": "JobPost"
+};
+
+module.exports = { modelMap, modelTextMap };
