@@ -1,6 +1,7 @@
 const { asyncHandler } = require("../../utils/asyncHandler.js");
 const { getTokenAndPayload } = require("../../utils/getTokenAndPayload.js");
 const { modelMap } = require("../../variable/modelMap.js");
+const { MyPost } = require('../../model/myPost.js');
 
 const deletePost = asyncHandler(async (req, res) => {
   const { mainCategory, post_id } = req.params;
@@ -24,6 +25,8 @@ const deletePost = asyncHandler(async (req, res) => {
   };
 
   await modelMap[mainCategory].findByIdAndDelete(post_id);
+
+  await MyPost.findByIdAndDelete(post_id);
 
   return res.sendStatus(204);
 });
