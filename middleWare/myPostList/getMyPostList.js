@@ -124,7 +124,7 @@ const getMyPostList = asyncHandler(async (req, res) => {
         let: { writerId: "$post.writer" },
         pipeline: [
           { $match: { $expr: { $eq: ["$_id", "$$writerId"] } } },
-          { $project: { _id: 1, nickname: 1 } } // ✅ 필요한 필드만 선택
+          { $project: { _id: 1, nickname: 1 } } // 필요한 필드만 선택
         ],
         as: "post.writer"
       }
