@@ -40,4 +40,6 @@ app.use("/photoNews", photoNewsRouter);
 app.use("/recommendedNews", recommendedNewsRouter);
 app.use("/myPostList", myPostListRouter);
 
-app.listen(process.env.PORT || 3000 || 3001, () => console.log("Server Started"));
+module.exports = app;
+
+// app.listen(process.env.PORT || 3000 || 3001, () => console.log("Server Started"));
